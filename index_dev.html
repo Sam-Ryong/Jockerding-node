@@ -27,34 +27,32 @@
       .then((stream) => {
         webcamStream.srcObject = stream;
 
-        // 1초마다 캡쳐하고 서버에 업로드
-        setInterval(() => {
+        // 비동기 함수로 만들어서 await 사용
+        async function captureAndUpload() {
           captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
           const imageData = captureCanvas.toDataURL('image/png');
 
           // 서버로 업로드
-          fetch('/upload', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ image: imageData })
-          })
-            .then(response => response.text())
-            .then(content => {
-              contentDiv.innerHTML = content; // 내용을 div에 업데이트
+          try {
+            const response = await fetch('/upload', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ image: imageData })
             });
-          // .then((response) => {
-          //   if (response.ok) {
-          //     console.log('Image uploaded successfully.');
-          //   } else {
-          //     console.error('Failed to upload the image.');
-          //   }
-          // })
-          // .catch((error) => {
-          //   console.error('Error uploading the image:', error);
-          // });
-        }, 100);
+            const content = await response.text();
+            contentDiv.innerHTML = content; // 내용을 div에 업데이트
+          } catch (error) {
+            console.error('Error uploading image:', error);
+          }
+
+          // 0.1초 후에 다음 업로드를 실행 (재귀적 호출)
+          setTimeout(captureAndUpload, 100);
+        }
+
+        // 처음 한 번은 바로 실행
+        captureAndUpload();
       })
       .catch((error) => {
         console.error('Error accessing webcam:', error);

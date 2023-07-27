@@ -40,31 +40,26 @@
             },
             body: JSON.stringify({ image: imageData })
           })
-            .then((response) => {
-              if (response.ok) {
-                console.log('Image uploaded successfully.');
-              } else {
-                console.error('Failed to upload the image.');
-              }
-            })
-            .catch((error) => {
-              console.error('Error uploading the image:', error);
+            .then(response => response.text())
+            .then(content => {
+              contentDiv.innerHTML = content; // 내용을 div에 업데이트
             });
+          // .then((response) => {
+          //   if (response.ok) {
+          //     console.log('Image uploaded successfully.');
+          //   } else {
+          //     console.error('Failed to upload the image.');
+          //   }
+          // })
+          // .catch((error) => {
+          //   console.error('Error uploading the image:', error);
+          // });
         }, 100);
       })
       .catch((error) => {
         console.error('Error accessing webcam:', error);
       });
 
-    function updateContent() {
-      fetch('/textfile') // 서버에서 텍스트 파일의 내용을 가져오는 API 호출
-        .then(response => response.text())
-        .then(content => {
-          contentDiv.innerHTML = content; // 내용을 div에 업데이트
-        });
-    }
-
-    setInterval(updateContent, 100); // 1초마다 업데이트 실행
 
 
     // 웹 브라우저가 Web Speech API를 지원하는지 확인

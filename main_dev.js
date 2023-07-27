@@ -81,20 +81,10 @@ app.post('/upload', async (req, res) => {
     const msg_helmet = response.data.msg_helmet;
 
     console.log('Received msg_helmet from Python server:', msg_helmet);
+    res.send(msg_helmet)
 
-    fs.writeFile(`uploads/captured-image.txt`,msg_helmet, async (err) => { // 이 부분을 DB에 저장하는 것으로 변경해야해요
-      if (err) {
-        console.error('Failed to save the image:', err);
-        return res.status(500).send('Failed to save the image.');
-      }
-
-      else {
-        res.send('Received msg_helmet from Python server: ' + msg_helmet);
-
-      }
-    
-    })
-  } catch (error) {
+    }
+   catch (error) {
     console.error('Error while sending request to Python server:');
     res.status(500).send('Error while sending request to Python server');
   }

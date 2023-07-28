@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Webcam Stream</title>
+</head>
+
+<body>
+    <h1>Webcam Stream</h1>
+    <div id="content"></div>
+    <video id="webcamStream" autoplay></video>
+    <video id="remoteVideo" autoplay></video>
+    <canvas id="captureCanvas" width="644" height="548" style="display: none;"></canvas>
+    <button id="startBtn">마이크 시작</button>
+    <div id="output"></div>
+
+    <!-- script.js 파일 로드 -->
+    <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"></script>
+    <script src="ai-connection.js"></script>
+</body>
+
+</html>

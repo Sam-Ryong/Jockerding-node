@@ -1,5 +1,7 @@
 const express = require('express');
+const socketIO = require('socket.io');
 const app = express();
+const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
 const bodyParser = require('body-parser');
@@ -8,7 +10,6 @@ const options = {
   key: fs.readFileSync("config/private.key"),
   cert: fs.readFileSync("config/certificate.crt"),
 };
-
 const redirectToHttps = (req, res, next) => {
   if (req.secure) {
     next();
@@ -16,15 +17,41 @@ const redirectToHttps = (req, res, next) => {
     res.redirect('https://' + req.headers.host + req.url);
   }
 };
+app.use(express.static(path.join(__dirname, 'public')));
+const server = https.createServer(options, app);
+const io = socketIO(server);
+io.on('connection', socket => {
+  console.log('새로운 사용자가 연결되었습니다.');
+
+  // 클라이언트가 offer를 보내면 다른 사용자에게 전달
+  socket.on('offer', offer => {
+    socket.broadcast.emit('offer', offer);
+  });
+
+  // 클라이언트가 answer를 보내면 다른 사용자에게 전달
+  socket.on('answer', answer => {
+    socket.broadcast.emit('answer', answer);
+  });
+
+  // 클라이언트가 ICE candidate를 보내면 다른 사용자에게 전달
+  socket.on('ice-candidate', candidate => {
+    socket.broadcast.emit('ice-candidate', candidate);
+  });
+
+  // 사용자가 연결을 끊었을 때 처리
+  socket.on('disconnect', () => {
+    console.log('사용자가 연결을 끊었습니다.');
+  });
+});
+
 
 app.use(redirectToHttps);
-
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 
 app.get('/',(req,res) => {
-  res.sendFile(__dirname + "/index_dev.html");
+  res.sendFile(__dirname + "/public/index_wow.html");
 })
 
 app.get('/textfile', (req, res) => {
@@ -90,11 +117,16 @@ app.post('/upload', async (req, res) => {
   }
   });
 
+
+
+
+
+
 app.listen(80, () => {
   console.log('Server is running on http://localhost:80');
 });
 
 
-https.createServer(options, app).listen(443, () => {
+server.listen(443, () => {
   console.log(`HTTPS server started on port 443`);
 });

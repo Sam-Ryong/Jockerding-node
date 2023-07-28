@@ -1,5 +1,4 @@
 const express = require('express');
-const http = require('http');
 const socketIO = require('socket.io');
 const path = require('path');
 const fs = require('fs');
@@ -17,7 +16,7 @@ const redirectToHttps = (req, res, next) => {
 };
 
 const app = express();
-const server = http.createServer(app);
+const server = https.createServer(options, app);
 const io = socketIO(server);
 app.use(redirectToHttps);
 
@@ -49,14 +48,16 @@ io.on('connection', socket => {
   });
 });
 
-const port = 80;
 
-server.listen(port, () => {
-  console.log(`서버가 포트 ${port}에서 실행 중입니다.`);
+app.listen(80, () => {
+  console.log(`서버가 포트 80에서 실행 중입니다.`);
+});
+
+server.listen(443, () => {
+  console.log(`서버가 포트 ${443}에서 실행 중입니다.`);
 });
 
 
-
-https.createServer(options, app).listen(443, () => {
-  console.log(`HTTPS server started on port 443`);
-});
+// https.createServer(options, app).listen(443, () => {
+//   console.log(`HTTPS server started on port 443`);
+// });

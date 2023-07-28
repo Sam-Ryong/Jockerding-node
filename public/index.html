@@ -26,7 +26,7 @@
 
 
     // 로컬 비디오 스트림 획득
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => {
         localVideo.srcObject = stream;
 

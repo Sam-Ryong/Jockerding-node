@@ -2,10 +2,24 @@ const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
 const path = require('path');
+const fs = require('fs');
+const https = require("https");
+const options = {
+  key: fs.readFileSync("config/private.key"),
+  cert: fs.readFileSync("config/certificate.crt"),
+};
+const redirectToHttps = (req, res, next) => {
+  if (req.secure) {
+    next();
+  } else {
+    res.redirect('https://' + req.headers.host + req.url);
+  }
+};
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
+app.use(redirectToHttps);
 
 // 정적 파일 제공
 app.use(express.static(path.join(__dirname, 'public')));
@@ -35,7 +49,14 @@ io.on('connection', socket => {
   });
 });
 
-const port = 3000;
+const port = 80;
+
 server.listen(port, () => {
   console.log(`서버가 포트 ${port}에서 실행 중입니다.`);
+});
+
+
+
+https.createServer(options, app).listen(443, () => {
+  console.log(`HTTPS server started on port 443`);
 });

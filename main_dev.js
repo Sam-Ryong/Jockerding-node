@@ -20,10 +20,20 @@ const redirectToHttps = (req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public')));
 const server = https.createServer(options, app);
 const io = socketIO(server);
+
+
 io.on('connection', socket => {
   console.log('새로운 사용자가 연결되었습니다.');
 
   // 클라이언트가 offer를 보내면 다른 사용자에게 전달
+  socket.on('msg', (msg) => {
+    console.log('메시지 받음: ' + msg);
+    socket.broadcast.emit('msg', msg); // 모든 클라이언트에게 메시지 전송
+  });
+  socket.on('graph', (graph) => {
+    console.log('그래프 받음: ' + graph);
+    socket.broadcast.emit('graph', graph); // 모든 클라이언트에게 메시지 전송
+  });
   socket.on('offer', offer => {
     socket.broadcast.emit('offer', offer);
   });

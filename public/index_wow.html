@@ -3,43 +3,78 @@
 
 <head>
     <title>Webcam Stream</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <h1>Webcam Stream</h1>
-    <div id="content"></div>
-    <table>
-        <tr>
-            <th>Key</th>
-            <th>Value</th>
-        </tr>
-        <tr>
-            <td>Surprise</td>
-            <td id="key1Value"></td>
-        </tr>
-        <tr>
-            <td>Neutral</td>
-            <td id="key2Value"></td>
-        </tr>
-        <tr>
-            <td>Anger</td>
-            <td id="key3Value"></td>
-        </tr>
-        <tr>
-            <td>Happy</td>
-            <td id="key4Value"></td>
-        </tr>
-        <tr>
-            <td>Sad</td>
-            <td id="key5Value"></td>
-        </tr>
-    </table>
-    <video id="webcamStream" autoplay></video>
-    <video id="remoteVideo" autoplay></video>
-    <canvas id="captureCanvas" width="644" height="548" style="display: none;"></canvas>
-    <button id="startBtn">마이크 시작</button>
-    <div id="output"></div>
+    <div class="container">
 
+        <div class="left-pane">
+            <div id="content"></div>
+            <table>
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>Surprise</td>
+                    <td id="key1Value"></td>
+                </tr>
+                <tr>
+                    <td>Neutral</td>
+                    <td id="key2Value"></td>
+                </tr>
+                <tr>
+                    <td>Anger</td>
+                    <td id="key3Value"></td>
+                </tr>
+                <tr>
+                    <td>Happy</td>
+                    <td id="key4Value"></td>
+                </tr>
+                <tr>
+                    <td>Sad</td>
+                    <td id="key5Value"></td>
+                </tr>
+            </table>
+            <video id="webcamStream" autoplay></video>
+            <canvas id="captureCanvas" width="644" height="548" style="display: none;"></canvas>
+            <button id="startBtn">마이크 시작</button>
+            <div id="output"></div>
+        </div>
+        <div class="right=pane">
+            <div id="op_content"></div>
+            <table>
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>Surprise</td>
+                    <td id="op_key1Value"></td>
+                </tr>
+                <tr>
+                    <td>Neutral</td>
+                    <td id="op_key2Value"></td>
+                </tr>
+                <tr>
+                    <td>Anger</td>
+                    <td id="op_key3Value"></td>
+                </tr>
+                <tr>
+                    <td>Happy</td>
+                    <td id="op_key4Value"></td>
+                </tr>
+                <tr>
+                    <td>Sad</td>
+                    <td id="op_key5Value"></td>
+                </tr>
+            </table>
+            <video id="remoteVideo" autoplay></video>
+        </div>
+
+    </div>
     <!-- script.js 파일 로드 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"></script>

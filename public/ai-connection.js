@@ -3,6 +3,7 @@ const remoteVideo = document.getElementById('remoteVideo');
 const captureCanvas = document.getElementById('captureCanvas');
 const captureContext = captureCanvas.getContext('2d');
 const contentDiv = document.getElementById('content');
+const op_contentDiv = document.getElementById('op_content');
 const startBtn = document.getElementById('startBtn');
 const outputDiv = document.getElementById('output');
 
@@ -18,6 +19,7 @@ const configuration = {
     navigator.mediaDevices.getUserMedia({ video: true })
       .then((stream) => {
         webcamStream.srcObject = stream;
+        const socket = io();
         captureAndUpload();
         // 비동기 함수로 만들어서 await 사용
         async function captureAndUpload() {
@@ -35,7 +37,7 @@ const configuration = {
             });
             const content = await response.json();
             contentDiv.innerHTML = content.msg_helmet; // 내용을 div에 업데이트
-            
+            socket.emit('msg',content.msg_helmet)
             const jsonData = content.graph;
         
             // 표에 데이터 채우기
@@ -44,7 +46,8 @@ const configuration = {
             document.getElementById("key3Value").innerText = "*".repeat(parseInt(jsonData["Anger"]));
             document.getElementById("key4Value").innerText = "*".repeat(parseInt(jsonData["Happy"]));
             document.getElementById("key5Value").innerText = "*".repeat(parseInt(jsonData["Sad"]));
-
+            socket.emit('graph',jsonData);
+            
           } catch (error) {
             console.error('Error uploading image:', error);
           }
@@ -53,10 +56,19 @@ const configuration = {
            setTimeout(captureAndUpload, 100); 
         }
 
-        const socket = io();
-
-        // offer 보내기
         const peerConnection = new RTCPeerConnection(configuration);
+
+        socket.on('msg', msg => {
+          op_contentDiv.innerHTML = msg;
+        })
+        socket.on('graph', graph => {
+          document.getElementById("op_key1Value").innerText = "*".repeat(parseInt(graph["Surprise"]));
+          document.getElementById("op_key2Value").innerText = "*".repeat(parseInt(graph["Neutral"]));
+          document.getElementById("op_key3Value").innerText = "*".repeat(parseInt(graph["Anger"]));
+          document.getElementById("op_key4Value").innerText = "*".repeat(parseInt(graph["Happy"]));
+          document.getElementById("op_key5Value").innerText = "*".repeat(parseInt(graph["Sad"]));
+        })
+        // offer 보내기
         peerConnection.addStream(stream);
         peerConnection.createOffer()
           .then(offer => peerConnection.setLocalDescription(offer))
@@ -66,7 +78,7 @@ const configuration = {
 
         // offer 받기
         socket.on('offer', offer => {
-          peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+          peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
           peerConnection.createAnswer()
             .then(answer => peerConnection.setLocalDescription(answer))
             .then(() => {
@@ -95,9 +107,6 @@ const configuration = {
         peerConnection.onaddstream = event => {
           remoteVideo.srcObject = event.stream;
         };
-
-        // 처음 한 번은 바로 실행
-        
       })
       .catch((error) => {
         console.error('Error accessing webcam:', error);

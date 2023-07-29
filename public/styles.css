@@ -1,0 +1,17 @@
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 반으로 나누기 */
+    height: 100vh; /* 전체 화면 높이로 설정 */
+  }
+  
+  .left-pane, .right-pane {
+    padding: 20px;
+  }
+  
+  .left-pane {
+    background-color: #f0f0f0;
+  }
+  
+  .right-pane {
+    background-color: #d3d3d3;
+  }

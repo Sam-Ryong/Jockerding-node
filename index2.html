@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>화상채팅</title>
+</head>
+
+<body>
+  <video id="localVideo" autoplay></video>
+  <video id="remoteVideo" autoplay></video>
+
+
+  <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"></script>
+
+  <script>
+    // WebRTC 연결 설정
+    const configuration = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]
+    };
+
+    const localVideo = document.getElementById('localVideo');
+    const remoteVideo = document.getElementById('remoteVideo');
+
+
+    // 로컬 비디오 스트림 획득
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        localVideo.srcObject = stream;
+
+        // 소켓 연결
+        const socket = io();
+
+        // offer 보내기
+        const peerConnection = new RTCPeerConnection(configuration);
+        peerConnection.addStream(stream);
+        peerConnection.createOffer()
+          .then(offer => peerConnection.setLocalDescription(offer))
+          .then(() => {
+            socket.emit('offer', peerConnection.localDescription);
+          });
+
+        // offer 받기
+        socket.on('offer', offer => {
+          peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+          peerConnection.createAnswer()
+            .then(answer => peerConnection.setLocalDescription(answer))
+            .then(() => {
+              socket.emit('answer', peerConnection.localDescription);
+            });
+        });
+
+        // answer 받기
+        socket.on('answer', answer => {
+          peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+        });
+
+        // ICE candidate 받기
+        socket.on('ice-candidate', candidate => {
+          peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+        });
+
+        // ICE candidate 보내기
+        peerConnection.onicecandidate = event => {
+          if (event.candidate) {
+            socket.emit('ice-candidate', event.candidate);
+          }
+        };
+
+        // 원격 비디오 스트림 받기
+        peerConnection.onaddstream = event => {
+          remoteVideo.srcObject = event.stream;
+        };
+      })
+      .catch(error => {
+        console.error('미디어 스트림을 가져오는데 실패했습니다:', error);
+      });
+  </script>
+</body>
+
+</html>

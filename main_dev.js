@@ -108,7 +108,7 @@ app.post('/upload', async (req, res) => {
     const msg_helmet = response.data.msg_helmet;
 
     console.log('Received msg_helmet from Python server:', msg_helmet);
-    res.send(msg_helmet)
+    res.send(response.data)
 
     }
    catch (error) {

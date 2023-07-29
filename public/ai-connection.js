@@ -5,6 +5,7 @@ const captureContext = captureCanvas.getContext('2d');
 const contentDiv = document.getElementById('content');
 const startBtn = document.getElementById('startBtn');
 const outputDiv = document.getElementById('output');
+
 const configuration = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
@@ -32,8 +33,18 @@ const configuration = {
               },
               body: JSON.stringify({ image: imageData })
             });
-            const content = await response.text();
-            contentDiv.innerHTML = content; // 내용을 div에 업데이트
+            const content = await response.json();
+            contentDiv.innerHTML = content.msg_helmet; // 내용을 div에 업데이트
+            
+            const jsonData = content.graph;
+        
+            // 표에 데이터 채우기
+            document.getElementById("key1Value").innerText = "*".repeat(parseInt(jsonData["Surprise"]));
+            document.getElementById("key2Value").innerText = "*".repeat(parseInt(jsonData["Neutral"]));
+            document.getElementById("key3Value").innerText = "*".repeat(parseInt(jsonData["Anger"]));
+            document.getElementById("key4Value").innerText = "*".repeat(parseInt(jsonData["Happy"]));
+            document.getElementById("key5Value").innerText = "*".repeat(parseInt(jsonData["Sad"]));
+
           } catch (error) {
             console.error('Error uploading image:', error);
           }

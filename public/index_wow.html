@@ -40,8 +40,11 @@
             </table>
             <video id="webcamStream" autoplay></video>
             <canvas id="captureCanvas" width="644" height="548" style="display: none;"></canvas>
-            <button id="startBtn">마이크 시작</button>
-            <div id="output"></div>
+            <button id="startButton">시작</button>
+            <button id="stopButton">중지</button>
+            <div id="status">준비 중...</div>
+            <audio id="localAudio" autoplay></audio>
+            <audio id="remoteAudio" autoplay></audio>
         </div>
         <div class="right=pane">
             <div id="op_content"></div>

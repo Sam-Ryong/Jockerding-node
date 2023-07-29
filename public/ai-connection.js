@@ -6,6 +6,11 @@ const contentDiv = document.getElementById('content');
 const op_contentDiv = document.getElementById('op_content');
 const startBtn = document.getElementById('startBtn');
 const outputDiv = document.getElementById('output');
+const localAudio = document.getElementById('localAudio');
+const remoteAudio = document.getElementById('remoteAudio');
+const startButton = document.getElementById('startButton');
+const stopButton = document.getElementById('stopButton');
+const statusDiv = document.getElementById('status');
 
 const configuration = {
   iceServers: [
@@ -13,13 +18,15 @@ const configuration = {
     { urls: 'stun:stun1.l.google.com:19302' }
   ]
 };
-
+const socket = io();
+startButton.addEventListener('click', startChat);
+stopButton.addEventListener('click', stopChat);
 
     // 웹캠 스트림 표시를 위한 미디어 장치 요청
-    navigator.mediaDevices.getUserMedia({ video: true })
+    navigator.mediaDevices.getUserMedia({ ...{video: true}})
       .then((stream) => {
         webcamStream.srcObject = stream;
-        const socket = io();
+        
         captureAndUpload();
         // 비동기 함수로 만들어서 await 사용
         async function captureAndUpload() {
@@ -113,11 +120,80 @@ const configuration = {
       });
 
 
+      async function startChat() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          localAudio.srcObject = stream;
+          localStream = stream;
+          console.log("마이크 연결완료!");
+          statusDiv.innerHTML = '연결 중...';
+      
+          peerConnection = new RTCPeerConnection();
+      
+          // 로컬 스트림 추가
+          localStream.getTracks().forEach(track => {
+            peerConnection.addTrack(track, localStream);
+          });
+      
+          // Offer 생성
+          const offer = await peerConnection.createOffer();
+          await peerConnection.setLocalDescription(offer);
+      
+          // Offer 서버로 전송
+          socket.emit('offer', peerConnection.localDescription);
+      
+          // Answer 받기
+          socket.on('answer', async (answer) => {
+            console.log('Received answer');
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+          });
+      
+          // ICE candidate 받기
+          socket.on('ice-candidate', async (candidate) => {
+            console.log('Received ICE candidate');
+            await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+          });
+      
+          // 연결 상태 이벤트 처리
+          peerConnection.oniceconnectionstatechange = () => {
+            if (peerConnection.iceConnectionState === 'connected') {
+              statusDiv.innerHTML = '음성 채팅 중...';
+            } else if (peerConnection.iceConnectionState === 'disconnected') {
+              statusDiv.innerHTML = '연결이 끊어졌습니다.';
+            }
+          };
+      
+          // 원격 스트림 수신 시 이벤트 처리
+          peerConnection.ontrack = event => {
+            if (event.streams && event.streams[0]) {
+              remoteAudio.srcObject = event.streams[0];
+            }
+          };
+        } catch (error) {
+          console.error('음성 채팅 오류:', error);
+          statusDiv.innerHTML = '음성 채팅을 시작할 수 없습니다.';
+        }
+      }
+      async function stopChat() {
+        // 연결 종료
+        if (peerConnection) {
+          peerConnection.close();
+        }
+      
+        // 오디오 재생 중지
+        localAudio.srcObject = null;
+        remoteAudio.srcObject = null;
+      
+        statusDiv.innerHTML = '준비 중...';
+      }
+
+
+
+
 
     // 웹 브라우저가 Web Speech API를 지원하는지 확인
     if ('webkitSpeechRecognition' in window) {
       const recognition = new webkitSpeechRecognition();
-
       // 인식이 시작되었을 때 실행되는 이벤트 핸들러
       recognition.onstart = () => {
         outputDiv.innerHTML = '말을 하세요...';
@@ -128,21 +204,6 @@ const configuration = {
         const transcript = event.results[0][0].transcript;
         outputDiv.innerHTML = '인식된 텍스트: ' + transcript;
 
-        // 서버로 인식된 텍스트를 보내기 위해 Fetch API 사용
-        fetch('/send_data', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ text: transcript })
-        })
-          .then(response => response.json())
-          .then(data => {
-            console.log('서버 응답:', data);
-          })
-          .catch(error => {
-            console.error('오류 발생:', error);
-          });
       };
 
       // 마이크 시작 버튼 클릭 시 실행되는 이벤트 핸들러

@@ -6,7 +6,6 @@ const contentDiv = document.getElementById('content');
 const op_contentDiv = document.getElementById('op_content');
 const startBtn = document.getElementById('startBtn');
 const outputDiv = document.getElementById('output');
-const localAudio = document.getElementById('localAudio');
 const remoteAudio = document.getElementById('remoteAudio');
 const startButton = document.getElementById('startButton');
 const stopButton = document.getElementById('stopButton');
@@ -63,7 +62,7 @@ stopButton.addEventListener('click', stopChat);
            setTimeout(captureAndUpload, 100); 
         }
 
-        const peerConnection = new RTCPeerConnection(configuration);
+        var peerConnection = new RTCPeerConnection(configuration);
 
         socket.on('msg', msg => {
           op_contentDiv.innerHTML = msg;
@@ -113,6 +112,7 @@ stopButton.addEventListener('click', stopChat);
         // 원격 비디오 스트림 받기
         peerConnection.onaddstream = event => {
           remoteVideo.srcObject = event.stream;
+          startButton.removeAttribute('disabled');
         };
       })
       .catch((error) => {
@@ -123,7 +123,6 @@ stopButton.addEventListener('click', stopChat);
       async function startChat() {
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          localAudio.srcObject = stream;
           localStream = stream;
           console.log("마이크 연결완료!");
           statusDiv.innerHTML = '연결 중...';
@@ -199,7 +198,6 @@ stopButton.addEventListener('click', stopChat);
         }
       
         // 오디오 재생 중지
-        localAudio.srcObject = null;
         remoteAudio.srcObject = null;
       
         statusDiv.innerHTML = '준비 중...';

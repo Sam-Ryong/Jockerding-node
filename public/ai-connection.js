@@ -23,7 +23,7 @@ startButton.addEventListener('click', startChat);
 stopButton.addEventListener('click', stopChat);
 
     // 웹캠 스트림 표시를 위한 미디어 장치 요청
-    navigator.mediaDevices.getUserMedia({ ...{video: true}})
+    navigator.mediaDevices.getUserMedia({video: true})
       .then((stream) => {
         webcamStream.srcObject = stream;
         
@@ -56,7 +56,7 @@ stopButton.addEventListener('click', stopChat);
             socket.emit('graph',jsonData);
             
           } catch (error) {
-            console.error('Error uploading image:', error);
+            console.error('Error uploading image:');
           }
 
           // 0.1초 후에 다음 업로드를 실행 (재귀적 호출)
@@ -135,31 +135,49 @@ stopButton.addEventListener('click', stopChat);
             peerConnection.addTrack(track, localStream);
           });
       
-          // Offer 생성
-          const offer = await peerConnection.createOffer();
-          await peerConnection.setLocalDescription(offer);
-      
-          // Offer 서버로 전송
-          socket.emit('offer', peerConnection.localDescription);
-      
-          // Answer 받기
-          socket.on('answer', async (answer) => {
-            console.log('Received answer');
-            await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+          // offer 보내기
+        peerConnection.addStream(stream);
+        peerConnection.createOffer()
+          .then(offer => peerConnection.setLocalDescription(offer))
+          .then(() => {
+            socket.emit('offer', peerConnection.localDescription);
           });
-      
-          // ICE candidate 받기
-          socket.on('ice-candidate', async (candidate) => {
-            console.log('Received ICE candidate');
-            await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-          });
+
+        // offer 받기
+        socket.on('offer', offer => {
+          peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
+          peerConnection.createAnswer()
+            .then(answer => peerConnection.setLocalDescription(answer))
+            .then(() => {
+              socket.emit('answer', peerConnection.localDescription);
+            });
+        });
+
+        // answer 받기
+        socket.on('answer', answer => {
+          peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+        });
+
+        // ICE candidate 받기
+        socket.on('ice-candidate', candidate => {
+          peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+        });
+
+        // ICE candidate 보내기
+        peerConnection.onicecandidate = event => {
+          if (event.candidate) {
+            socket.emit('ice-candidate', event.candidate);
+          }
+        };
       
           // 연결 상태 이벤트 처리
           peerConnection.oniceconnectionstatechange = () => {
             if (peerConnection.iceConnectionState === 'connected') {
               statusDiv.innerHTML = '음성 채팅 중...';
             } else if (peerConnection.iceConnectionState === 'disconnected') {
-              statusDiv.innerHTML = '연결이 끊어졌습니다.';
+              statusDiv.innerHTML = '연결이 끊어졌습니다. 다시 연결 중';
+            } else if (peerConnection.iceConnectionState === 'closed') {
+              statusDiv.innerHTML = '연결이 종료되었습니다.';
             }
           };
       
@@ -191,26 +209,26 @@ stopButton.addEventListener('click', stopChat);
 
 
 
-    // 웹 브라우저가 Web Speech API를 지원하는지 확인
-    if ('webkitSpeechRecognition' in window) {
-      const recognition = new webkitSpeechRecognition();
-      // 인식이 시작되었을 때 실행되는 이벤트 핸들러
-      recognition.onstart = () => {
-        outputDiv.innerHTML = '말을 하세요...';
-      };
+    // // 웹 브라우저가 Web Speech API를 지원하는지 확인
+    // if ('webkitSpeechRecognition' in window) {
+    //   const recognition = new webkitSpeechRecognition();
+    //   // 인식이 시작되었을 때 실행되는 이벤트 핸들러
+    //   recognition.onstart = () => {
+    //     outputDiv.innerHTML = '말을 하세요...';
+    //   };
 
-      // 인식이 종료되었을 때 실행되는 이벤트 핸들러
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        outputDiv.innerHTML = '인식된 텍스트: ' + transcript;
+    //   // 인식이 종료되었을 때 실행되는 이벤트 핸들러
+    //   recognition.onresult = (event) => {
+    //     const transcript = event.results[0][0].transcript;
+    //     outputDiv.innerHTML = '인식된 텍스트: ' + transcript;
 
-      };
+    //   };
 
-      // 마이크 시작 버튼 클릭 시 실행되는 이벤트 핸들러
-      startBtn.addEventListener('click', () => {
-        recognition.start();
-      });
-    } else {
-      // Web Speech API를 지원하지 않는 경우에 대한 처리
-      outputDiv.innerHTML = '죄송합니다. 웹 브라우저가 Web Speech API를 지원하지 않습니다.';
-    }
+    //   // 마이크 시작 버튼 클릭 시 실행되는 이벤트 핸들러
+    //   startBtn.addEventListener('click', () => {
+    //     recognition.start();
+    //   });
+    // } else {
+    //   // Web Speech API를 지원하지 않는 경우에 대한 처리
+    //   outputDiv.innerHTML = '죄송합니다. 웹 브라우저가 Web Speech API를 지원하지 않습니다.';
+    // }

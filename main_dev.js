@@ -117,12 +117,11 @@ app.post('/upload', async (req, res) => {
 
     const msg_helmet = response.data.msg_helmet;
 
-    console.log('Received msg_helmet from Python server:', msg_helmet);
+    // console.log('Received msg_helmet from Python server:', msg_helmet);
     res.send(response.data)
 
     }
    catch (error) {
-    console.error('Error while sending request to Python server:');
     res.status(500).send('Error while sending request to Python server');
   }
   });

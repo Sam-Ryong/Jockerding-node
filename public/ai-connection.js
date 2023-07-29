@@ -110,10 +110,21 @@ stopButton.addEventListener('click', stopChat);
         };
 
         // 원격 비디오 스트림 받기
-        peerConnection.onaddstream = event => {
-          remoteVideo.srcObject = event.stream;
-          startButton.removeAttribute('disabled');
+        peerConnection.ontrack = event => {
+          const track = event.track;
+          if (track.kind === 'video') {
+            remoteVideo.srcObject = event.streams[0];
+            startButton.removeAttribute('disabled');
+          }
         };
+
+        peerConnection.oniceconnectionstatechange = () => {
+          if (peerConnection.iceConnectionState === 'disconnected' || peerConnection.iceConnectionState === 'closed') {
+            remoteVideo.srcObject = null;
+            startButton.setAttribute('disabled', true);
+          }
+        };
+ 
       })
       .catch((error) => {
         console.error('Error accessing webcam:', error);

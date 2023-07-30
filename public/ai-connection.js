@@ -4,11 +4,7 @@ const captureCanvas = document.getElementById('captureCanvas');
 const captureContext = captureCanvas.getContext('2d');
 const contentDiv = document.getElementById('content');
 const op_contentDiv = document.getElementById('op_content');
-const startBtn = document.getElementById('startBtn');
 const outputDiv = document.getElementById('output');
-const remoteAudio = document.getElementById('remoteAudio');
-const startButton = document.getElementById('startButton');
-const stopButton = document.getElementById('stopButton');
 const statusDiv = document.getElementById('status');
 
 const configuration = {
@@ -19,18 +15,20 @@ const configuration = {
   ]
 };
 const socket = io();
+let currentRoom = null;
 
     // 웹캠 스트림 표시를 위한 미디어 장치 요청
     navigator.mediaDevices.getUserMedia({video: true, audio: true})
       .then((stream) => {
         webcamStream.srcObject = stream;
-        
-        captureAndUpload();
+        const roomId = prompt('방 번호를 입력하세요 (1 또는 2):');
+        socket.emit('join room', roomId);
+
         // 비동기 함수로 만들어서 await 사용
         async function captureAndUpload() {
           captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
           const imageData = captureCanvas.toDataURL('image/png');
-
+          
           // 서버로 업로드
           try {
             const response = await fetch('/upload', {
@@ -42,7 +40,9 @@ const socket = io();
             });
             const content = await response.json();
             contentDiv.innerHTML = content.msg_helmet; // 내용을 div에 업데이트
-            socket.emit('msg',content.msg_helmet)
+            if (currentRoom){
+            socket.emit('msg',content.msg_helmet, currentRoom)
+            }
             const jsonData = content.graph;
         
             // 표에 데이터 채우기
@@ -51,7 +51,9 @@ const socket = io();
             document.getElementById("key3Value").innerText = "*".repeat(parseInt(jsonData["Anger"]));
             document.getElementById("key4Value").innerText = "*".repeat(parseInt(jsonData["Happy"]));
             document.getElementById("key5Value").innerText = "*".repeat(parseInt(jsonData["Sad"]));
-            socket.emit('graph',jsonData);
+            if (currentRoom){
+              socket.emit('graph', jsonData, currentRoom);
+            }
             
           } catch (error) {
             console.error('Error uploading image:');
@@ -73,21 +75,34 @@ const socket = io();
           document.getElementById("op_key4Value").innerText = "*".repeat(parseInt(graph["Happy"]));
           document.getElementById("op_key5Value").innerText = "*".repeat(parseInt(graph["Sad"]));
         })
+        socket.on('room joined', (room) => {
+          currentRoom = room;
+        });
+        socket.on('room full', () => {
+          alert('방이 가득 찼습니다. 다른 방에 접속해주세요.');
+        });
+        socket.on('user joined', (userId) => {
+          alert(userId + '님이 방에 참여했습니다.');
+        });
+        socket.on('user left', (userId) => {
+          alert(userId + '님이 방을 나갔습니다.');
+        });
+    
+    
         // offer 보내기
         peerConnection.addStream(stream);
         peerConnection.createOffer()
           .then(offer => peerConnection.setLocalDescription(offer))
           .then(() => {
-            socket.emit('offer', peerConnection.localDescription);
+            socket.emit('offer', peerConnection.localDescription, currentRoom);
           });
-
         // offer 받기
         socket.on('offer', offer => {
           peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
           peerConnection.createAnswer()
             .then(answer => peerConnection.setLocalDescription(answer))
             .then(() => {
-              socket.emit('answer', peerConnection.localDescription);
+              socket.emit('answer', peerConnection.localDescription, currentRoom);
             });
         });
 
@@ -104,7 +119,7 @@ const socket = io();
         // ICE candidate 보내기
         peerConnection.onicecandidate = event => {
           if (event.candidate) {
-            socket.emit('ice-candidate', event.candidate);
+            socket.emit('ice-candidate', event.candidate, currentRoom);
           }
         };
 
@@ -136,32 +151,12 @@ const socket = io();
             remoteVideo.srcObject = null;
           }
         };
- 
+        
+        captureAndUpload();
+        
+        
       })
       .catch((error) => {
         console.error('Error accessing webcam:', error);
       });
-
-    // // 웹 브라우저가 Web Speech API를 지원하는지 확인
-    // if ('webkitSpeechRecognition' in window) {
-    //   const recognition = new webkitSpeechRecognition();
-    //   // 인식이 시작되었을 때 실행되는 이벤트 핸들러
-    //   recognition.onstart = () => {
-    //     outputDiv.innerHTML = '말을 하세요...';
-    //   };
-
-    //   // 인식이 종료되었을 때 실행되는 이벤트 핸들러
-    //   recognition.onresult = (event) => {
-    //     const transcript = event.results[0][0].transcript;
-    //     outputDiv.innerHTML = '인식된 텍스트: ' + transcript;
-
-    //   };
-
-    //   // 마이크 시작 버튼 클릭 시 실행되는 이벤트 핸들러
-    //   startBtn.addEventListener('click', () => {
-    //     recognition.start();
-    //   });
-    // } else {
-    //   // Web Speech API를 지원하지 않는 경우에 대한 처리
-    //   outputDiv.innerHTML = '죄송합니다. 웹 브라우저가 Web Speech API를 지원하지 않습니다.';
-    // }
+      

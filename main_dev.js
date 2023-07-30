@@ -20,37 +20,75 @@ const redirectToHttps = (req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public')));
 const server = https.createServer(options, app);
 const io = socketIO(server);
-
+var rooms = {};
 
 io.on('connection', socket => {
   console.log('새로운 사용자가 연결되었습니다.');
 
+  socket.on('join room', (room) => {
+    // 이미 방이 존재하는 경우
+    if (rooms[room] && rooms[room].length === 2) {
+      socket.emit('room full');
+      return;
+    }
+
+    // 방에 참여
+    socket.join(room);
+    if (!rooms[room]) {
+      rooms[room] = [];
+    }
+    rooms[room].push(socket.id);
+
+    // 클라이언트에 방 정보 전송
+    socket.emit('room joined', room);
+
+    // 다른 클라이언트에게 새로운 사용자 정보 전송
+    socket.to(room).emit('user joined', socket.id);
+
+    console.log(socket.id + '님이 방 ' + room + '에 참여했습니다.');
+  });
+
+
   // 클라이언트가 offer를 보내면 다른 사용자에게 전달
-  socket.on('msg', (msg) => {
-    console.log('메시지 받음: ' + msg);
-    socket.broadcast.emit('msg', msg); // 모든 클라이언트에게 메시지 전송
+  socket.on('msg', (msg, room) => {
+    socket.to(room).emit('msg', msg); // 모든 클라이언트에게 메시지 전송
   });
-  socket.on('graph', (graph) => {
-    console.log('그래프 받음: ' + graph);
-    socket.broadcast.emit('graph', graph); // 모든 클라이언트에게 메시지 전송
+  socket.on('graph', (graph, room) => {
+    socket.to(room).emit('graph', graph); // 모든 클라이언트에게 메시지 전송
   });
-  socket.on('offer', offer => {
-    socket.broadcast.emit('offer', offer);
+  socket.on('offer', (offer, room) => {
+    socket.to(room).emit('offer', offer);
   });
 
   // 클라이언트가 answer를 보내면 다른 사용자에게 전달
-  socket.on('answer', answer => {
-    socket.broadcast.emit('answer', answer);
+  socket.on('answer', (answer, room) => {
+    socket.to(room).emit('answer', answer);
   });
 
   // 클라이언트가 ICE candidate를 보내면 다른 사용자에게 전달
-  socket.on('ice-candidate', candidate => {
-    socket.broadcast.emit('ice-candidate', candidate);
+  socket.on('ice-candidate', (candidate, room) => {
+    socket.to(room).emit('ice-candidate', candidate);
   });
 
   // 사용자가 연결을 끊었을 때 처리
   socket.on('disconnect', () => {
-    console.log('사용자가 연결을 끊었습니다.');
+    console.log(socket.id + '사용자가 연결을 끊었습니다.');for (const room in rooms) {
+      const index = rooms[room].indexOf(socket.id);
+      if (index !== -1) {
+        // 방에서 사용자 제거
+        rooms[room].splice(index, 1);
+
+        // 모든 클라이언트에게 사용자가 방을 나갔음을 알림
+        io.to(room).emit('user left', socket.id);
+
+        // 방이 빈 상태이면 방 삭제
+        if (rooms[room].length === 0) {
+          delete rooms[room];
+        }
+
+        break;
+      }
+    }
   });
 });
 

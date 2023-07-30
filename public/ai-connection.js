@@ -123,99 +123,24 @@ const socket = io();
             startButton.setAttribute('disabled', true);
           }
         };
+
+        // 연결 상태 이벤트 처리
+        peerConnection.oniceconnectionstatechange = () => {
+          if (peerConnection.iceConnectionState === 'connected') {
+            statusDiv.innerHTML = '음성 채팅 중...';
+          } else if (peerConnection.iceConnectionState === 'disconnected') {
+            statusDiv.innerHTML = '연결이 끊어졌습니다. 다시 연결 중';
+            remoteVideo.srcObject = null;
+          } else if (peerConnection.iceConnectionState === 'closed') {
+            statusDiv.innerHTML = '연결이 종료되었습니다.';
+            remoteVideo.srcObject = null;
+          }
+        };
  
       })
       .catch((error) => {
         console.error('Error accessing webcam:', error);
       });
-
-
-      async function startChat() {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          localStream = stream;
-          console.log("마이크 연결완료!");
-          statusDiv.innerHTML = '연결 중...';
-      
-          peerConnection = new RTCPeerConnection();
-      
-          // 로컬 스트림 추가
-          localStream.getTracks().forEach(track => {
-            peerConnection.addTrack(track, localStream);
-          });
-      
-          // offer 보내기
-        peerConnection.addStream(stream);
-        peerConnection.createOffer()
-          .then(offer => peerConnection.setLocalDescription(offer))
-          .then(() => {
-            socket.emit('offer', peerConnection.localDescription);
-          });
-
-        // offer 받기
-        socket.on('offer', offer => {
-          peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
-          peerConnection.createAnswer()
-            .then(answer => peerConnection.setLocalDescription(answer))
-            .then(() => {
-              socket.emit('answer', peerConnection.localDescription);
-            });
-        });
-
-        // answer 받기
-        socket.on('answer', answer => {
-          peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-        });
-
-        // ICE candidate 받기
-        socket.on('ice-candidate', candidate => {
-          peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-        });
-
-        // ICE candidate 보내기
-        peerConnection.onicecandidate = event => {
-          if (event.candidate) {
-            socket.emit('ice-candidate', event.candidate);
-          }
-        };
-      
-          // 연결 상태 이벤트 처리
-          peerConnection.oniceconnectionstatechange = () => {
-            if (peerConnection.iceConnectionState === 'connected') {
-              statusDiv.innerHTML = '음성 채팅 중...';
-            } else if (peerConnection.iceConnectionState === 'disconnected') {
-              statusDiv.innerHTML = '연결이 끊어졌습니다. 다시 연결 중';
-            } else if (peerConnection.iceConnectionState === 'closed') {
-              statusDiv.innerHTML = '연결이 종료되었습니다.';
-            }
-          };
-      
-          // 원격 스트림 수신 시 이벤트 처리
-          peerConnection.ontrack = event => {
-            if (event.streams && event.streams[0]) {
-              remoteAudio.srcObject = event.streams[0];
-            }
-          };
-        } catch (error) {
-          console.error('음성 채팅 오류:', error);
-          statusDiv.innerHTML = '음성 채팅을 시작할 수 없습니다.';
-        }
-      }
-      async function stopChat() {
-        // 연결 종료
-        if (peerConnection) {
-          peerConnection.close();
-        }
-      
-        // 오디오 재생 중지
-        remoteAudio.srcObject = null;
-      
-        statusDiv.innerHTML = '준비 중...';
-      }
-
-
-
-
 
     // // 웹 브라우저가 Web Speech API를 지원하는지 확인
     // if ('webkitSpeechRecognition' in window) {

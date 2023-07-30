@@ -22,6 +22,7 @@ const server = https.createServer(options, app);
 const io = socketIO(server);
 var rooms = {};
 
+
 io.on('connection', socket => {
   console.log('새로운 사용자가 연결되었습니다.');
 
@@ -38,6 +39,7 @@ io.on('connection', socket => {
       rooms[room] = [];
     }
     rooms[room].push(socket.id);
+    console.log(rooms);
 
     // 클라이언트에 방 정보 전송
     socket.emit('room joined', room);
@@ -50,11 +52,28 @@ io.on('connection', socket => {
 
 
   // 클라이언트가 offer를 보내면 다른 사용자에게 전달
+  socket.on('connect_ai', async (imageData) => {
+    base64Data = imageData.replace(/^data:image\/png;base64,/, '');
+    try {
+      const response = await axios.post('http://localhost:5000/predict', {
+        base64Data: base64Data,
+      });
+      socket.emit('msg',response.data.msg_helmet);
+      socket.emit('graph',response.data.graph);
+      socket.emit('connected_ai');
+      
+    }
+      catch (error) {
+        console.log("err");
+      }
+    
+  });
+
   socket.on('msg', (msg, room) => {
-    socket.to(room).emit('msg', msg); // 모든 클라이언트에게 메시지 전송
+    socket.to(room).emit('op_msg', msg); // 모든 클라이언트에게 메시지 전송
   });
   socket.on('graph', (graph, room) => {
-    socket.to(room).emit('graph', graph); // 모든 클라이언트에게 메시지 전송
+    socket.to(room).emit('op_graph', graph); // 모든 클라이언트에게 메시지 전송
   });
   socket.on('offer', (offer, room) => {
     socket.to(room).emit('offer', offer);
@@ -72,7 +91,8 @@ io.on('connection', socket => {
 
   // 사용자가 연결을 끊었을 때 처리
   socket.on('disconnect', () => {
-    console.log(socket.id + '사용자가 연결을 끊었습니다.');for (const room in rooms) {
+    console.log(socket.id + '사용자가 연결을 끊었습니다.');
+    for (const room in rooms) {
       const index = rooms[room].indexOf(socket.id);
       if (index !== -1) {
         // 방에서 사용자 제거
@@ -80,7 +100,7 @@ io.on('connection', socket => {
 
         // 모든 클라이언트에게 사용자가 방을 나갔음을 알림
         io.to(room).emit('user left', socket.id);
-
+        
         // 방이 빈 상태이면 방 삭제
         if (rooms[room].length === 0) {
           delete rooms[room];
@@ -89,6 +109,7 @@ io.on('connection', socket => {
         break;
       }
     }
+    console.log(rooms);
   });
 });
 

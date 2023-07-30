@@ -23,57 +23,78 @@ let currentRoom = null;
         webcamStream.srcObject = stream;
         const roomId = prompt('방 번호를 입력하세요 (1 또는 2):');
         socket.emit('join room', roomId);
-
-        // 비동기 함수로 만들어서 await 사용
-        async function captureAndUpload() {
-          captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-          const imageData = captureCanvas.toDataURL('image/png');
-          
-          // 서버로 업로드
-          try {
-            const response = await fetch('/upload', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ image: imageData })
-            });
-            const content = await response.json();
-            contentDiv.innerHTML = content.msg_helmet; // 내용을 div에 업데이트
-            if (currentRoom){
-            socket.emit('msg',content.msg_helmet, currentRoom)
-            }
-            const jsonData = content.graph;
         
-            // 표에 데이터 채우기
-            document.getElementById("key1Value").innerText = "*".repeat(parseInt(jsonData["Surprise"]));
-            document.getElementById("key2Value").innerText = "*".repeat(parseInt(jsonData["Neutral"]));
-            document.getElementById("key3Value").innerText = "*".repeat(parseInt(jsonData["Anger"]));
-            document.getElementById("key4Value").innerText = "*".repeat(parseInt(jsonData["Happy"]));
-            document.getElementById("key5Value").innerText = "*".repeat(parseInt(jsonData["Sad"]));
-            if (currentRoom){
-              socket.emit('graph', jsonData, currentRoom);
-            }
+        // // 비동기 함수로 만들어서 await 사용
+        // async function captureAndUpload() {
+        //   captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+        //   const imageData = captureCanvas.toDataURL('image/png');
+          
+        //   // 서버로 업로드
+        //   try {
+        //     const response = await fetch('/upload', {
+        //       method: 'POST',
+        //       headers: {
+        //         'Content-Type': 'application/json'
+        //       },
+        //       body: JSON.stringify({ image: imageData })
+        //     });
+        //     const content = await response.json();
+        //     contentDiv.innerHTML = content.msg_helmet; // 내용을 div에 업데이트
+        //     if (currentRoom){
+        //     socket.emit('msg',content.msg_helmet, currentRoom)
+        //     }
+        //     const jsonData = content.graph;
+        
+        //     // 표에 데이터 채우기
+        //     document.getElementById("key1Value").innerText = "*".repeat(parseInt(jsonData["Surprise"]));
+        //     document.getElementById("key2Value").innerText = "*".repeat(parseInt(jsonData["Neutral"]));
+        //     document.getElementById("key3Value").innerText = "*".repeat(parseInt(jsonData["Anger"]));
+        //     document.getElementById("key4Value").innerText = "*".repeat(parseInt(jsonData["Happy"]));
+        //     document.getElementById("key5Value").innerText = "*".repeat(parseInt(jsonData["Sad"]));
+        //     if (currentRoom){
+        //       socket.emit('graph', jsonData, currentRoom);
+        //     }
             
-          } catch (error) {
-            console.error('Error uploading image:');
-          }
+        //   } catch (error) {
+        //     console.error('Error uploading image:');
+        //   }
 
-          // 0.1초 후에 다음 업로드를 실행 (재귀적 호출)
-           setTimeout(captureAndUpload, 100); 
-        }
-
+        //   // 0.1초 후에 다음 업로드를 실행 (재귀적 호출)
+        //    setTimeout(captureAndUpload, 100); 
+        // }
+        captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+        imageData = captureCanvas.toDataURL('image/png');
+        socket.emit('connect_ai',imageData)
         var peerConnection = new RTCPeerConnection(configuration);
 
-        socket.on('msg', msg => {
-          op_contentDiv.innerHTML = msg;
+        socket.on('connected_ai', () => {
+          captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+          imageData = captureCanvas.toDataURL('image/png');
+          socket.emit('connect_ai', imageData);
         })
+
         socket.on('graph', graph => {
-          document.getElementById("op_key1Value").innerText = "*".repeat(parseInt(graph["Surprise"]));
-          document.getElementById("op_key2Value").innerText = "*".repeat(parseInt(graph["Neutral"]));
-          document.getElementById("op_key3Value").innerText = "*".repeat(parseInt(graph["Anger"]));
-          document.getElementById("op_key4Value").innerText = "*".repeat(parseInt(graph["Happy"]));
-          document.getElementById("op_key5Value").innerText = "*".repeat(parseInt(graph["Sad"]));
+          document.getElementById("key1Value").innerText = "*".repeat(parseInt(graph["Surprise"]));
+          document.getElementById("key2Value").innerText = "*".repeat(parseInt(graph["Neutral"]));
+          document.getElementById("key3Value").innerText = "*".repeat(parseInt(graph["Anger"]));
+          document.getElementById("key4Value").innerText = "*".repeat(parseInt(graph["Happy"]));
+          document.getElementById("key5Value").innerText = "*".repeat(parseInt(graph["Sad"]));
+          socket.emit('graph', graph, currentRoom);
+        })
+        socket.on('msg', msg => {
+          contentDiv.innerHTML = msg;
+          socket.emit('msg',msg, currentRoom);
+        })
+        socket.on('op_msg', op_msg => {
+          op_contentDiv.innerHTML = op_msg;
+        })
+
+        socket.on('op_graph', op_graph => {
+          document.getElementById("op_key1Value").innerText = "*".repeat(parseInt(op_graph["Surprise"]));
+          document.getElementById("op_key2Value").innerText = "*".repeat(parseInt(op_graph["Neutral"]));
+          document.getElementById("op_key3Value").innerText = "*".repeat(parseInt(op_graph["Anger"]));
+          document.getElementById("op_key4Value").innerText = "*".repeat(parseInt(op_graph["Happy"]));
+          document.getElementById("op_key5Value").innerText = "*".repeat(parseInt(op_graph["Sad"]));
         })
         socket.on('room joined', (room) => {
           currentRoom = room;
@@ -128,14 +149,12 @@ let currentRoom = null;
           const track = event.track;
           if (track.kind === 'video') {
             remoteVideo.srcObject = event.streams[0];
-            startButton.removeAttribute('disabled');
           }
         };
 
         peerConnection.oniceconnectionstatechange = () => {
           if (peerConnection.iceConnectionState === 'disconnected' || peerConnection.iceConnectionState === 'closed') {
             remoteVideo.srcObject = null;
-            startButton.setAttribute('disabled', true);
           }
         };
 
@@ -152,7 +171,7 @@ let currentRoom = null;
           }
         };
         
-        captureAndUpload();
+        // captureAndUpload();
         
         
       })

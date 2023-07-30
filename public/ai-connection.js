@@ -15,17 +15,13 @@ const configuration = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: 'stun:stun2.l.google.com:19302' },
-    { urls: 'stun:stun3.l.google.com:19302' },
-    { urls: 'stun:stu4.l.google.com:19302' }
+    {url: 'turn:numb.viagenie.ca', credential: 'muazkh', username: 'webrtc@live.com'}
   ]
 };
 const socket = io();
-startButton.addEventListener('click', startChat);
-stopButton.addEventListener('click', stopChat);
 
     // 웹캠 스트림 표시를 위한 미디어 장치 요청
-    navigator.mediaDevices.getUserMedia({video: true})
+    navigator.mediaDevices.getUserMedia({video: true, audio: true})
       .then((stream) => {
         webcamStream.srcObject = stream;
         

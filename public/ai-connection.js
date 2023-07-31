@@ -23,7 +23,7 @@ let lock = 0;
 
     // 웹캠 스트림 표시를 위한 미디어 장치 요청
     navigator.mediaDevices.getUserMedia({video: true, audio: true})
-      .then((stream) => {
+      .then(async (stream) => {
         webcamStream.srcObject = stream;
         const roomId = prompt('방 번호를 입력하세요 (1 또는 2):');
         socket.emit('join room', roomId);
@@ -121,8 +121,8 @@ let lock = 0;
     
     
         // offer 보내기
-        peerConnection.addStream(stream).then(()=>{
-        peerConnection.createOffer()})
+        await peerConnection.addStream(stream);
+        peerConnection.createOffer()
           .then(offer => peerConnection.setLocalDescription(offer))
           .then(() => {
             socket.emit('offer', peerConnection.localDescription, currentRoom);

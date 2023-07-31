@@ -30,7 +30,7 @@ let lock = 0;
         
         captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
         imageData = captureCanvas.toDataURL('image/png');
-        socket.emit('connect_ai',imageData)
+        
         var peerConnection = new RTCPeerConnection(configuration);
 
         socket.on('connected_ai', () => {
@@ -176,7 +176,7 @@ let lock = 0;
             remoteVideo.srcObject = null;
           }
         };
-        
+        socket.emit('connect_ai',imageData)
         // captureAndUpload();
         
         

@@ -27,10 +27,7 @@ let lock = 0;
         webcamStream.srcObject = stream;
         const roomId = prompt('방 번호를 입력하세요 (1 또는 2):');
         socket.emit('join room', roomId);
-        
-        captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-        imageData = captureCanvas.toDataURL('image/png');
-        
+
         var peerConnection = new RTCPeerConnection(configuration);
 
         socket.on('connected_ai', () => {
@@ -145,6 +142,9 @@ let lock = 0;
         // ICE candidate 받기
         socket.on('ice-candidate', async (candidate) => {
           await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+          captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+          imageData = captureCanvas.toDataURL('image/png');
+          socket.emit('connect_ai', imageData);
         });
 
         // ICE candidate 보내기
@@ -176,7 +176,7 @@ let lock = 0;
             remoteVideo.srcObject = null;
           }
         };
-        socket.emit('connect_ai',imageData)
+        
         // captureAndUpload();
         
         

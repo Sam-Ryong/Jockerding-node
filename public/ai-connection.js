@@ -143,14 +143,14 @@ let lock = 0;
         });
 
         // ICE candidate 받기
-        socket.on('ice-candidate', candidate => {
-          peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+        socket.on('ice-candidate', async (candidate) => {
+          await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
         });
 
         // ICE candidate 보내기
-        peerConnection.onicecandidate = event => {
+        peerConnection.onicecandidate = async (event) => {
           if (event.candidate) {
-            socket.emit('ice-candidate', event.candidate, currentRoom);
+            await socket.emit('ice-candidate', event.candidate, currentRoom);
           }
         };
 

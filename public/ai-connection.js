@@ -121,8 +121,8 @@ let lock = 0;
     
     
         // offer 보내기
-        peerConnection.addStream(stream);
-        peerConnection.createOffer()
+        peerConnection.addStream(stream).then(()=>{
+        peerConnection.createOffer()})
           .then(offer => peerConnection.setLocalDescription(offer))
           .then(() => {
             socket.emit('offer', peerConnection.localDescription, currentRoom);
@@ -163,11 +163,6 @@ let lock = 0;
           remoteVideo.srcObject = event.streams[0];
         };
 
-        peerConnection.oniceconnectionstatechange = () => {
-          if (peerConnection.iceConnectionState === 'disconnected' || peerConnection.iceConnectionState === 'closed') {
-            remoteVideo.srcObject = null;
-          }
-        };
 
         // 연결 상태 이벤트 처리
         peerConnection.oniceconnectionstatechange = () => {

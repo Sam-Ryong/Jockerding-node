@@ -160,6 +160,7 @@ let lock = 0;
           if (track.kind === 'video') {
             remoteVideo.srcObject = event.streams[0];
           }
+          remoteVideo.srcObject = event.streams[0];
         };
 
         peerConnection.oniceconnectionstatechange = () => {

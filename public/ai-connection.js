@@ -111,6 +111,7 @@ let lock = 0;
           alert('방이 가득 찼습니다. 다른 방에 접속해주세요.');
         });
         socket.on('user joined', (userId) => {
+          alert('상대방이 접속했습니다.');
           lock = 1;
         });
         socket.on('user left', (userId) => {

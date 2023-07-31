@@ -59,7 +59,10 @@ io.on('connection', socket => {
         base64Data: base64Data,
       });
       socket.emit('msg',response.data.msg_helmet);
-      socket.emit('graph',response.data.graph);
+      if (response.data.msg_helmet != "No face detected.")
+      {
+        socket.emit('graph',response.data.graph);
+      }
       socket.emit('connected_ai');
       
     }
@@ -119,31 +122,10 @@ app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 
-app.get('/',(req,res) => {
+app.get('/fight',(req,res) => {
   res.sendFile(__dirname + "/public/index_wow.html");
 })
 
-app.get('/textfile', (req, res) => {
-  fs.readFile('uploads/captured-image.txt', 'utf8', (err, data) => { //이 부분을 DB에서 가져오는 것으로 변경해야해요
-      if (err) {
-          res.status(500).send('error!');
-      } else {
-          res.send(data);
-      }
-  });
-});
-
-// flask가 이미지를 받을 수 있게 열어놓기
-app.get('/image', async(req,res) => { 
-  fs.readFile('uploads/captured-image.jpg', (err, data) =>{
-    if (err) {
-      res.status(500).send('error!');
-      console.log("ok");
-  } else {
-      res.send(data);
-  }
-  });
-})
 
 // flask가 이미지 분석한 것을 언제 보낼지 모르니 듣고있다가 받으면 바로 작성하기
 app.post('/image', async(req,res) =>{

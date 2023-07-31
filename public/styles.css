@@ -1,11 +1,20 @@
-.container {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 반으로 나누기 */
-    height: 100vh; /* 전체 화면 높이로 설정 */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 20px;
   }
   
   .left-pane, .right-pane {
-    padding: 20px;
+    flex: 1;
+    padding: 10px;
   }
   
   .left-pane {
@@ -13,5 +22,30 @@
   }
   
   .right-pane {
-    background-color: #d3d3d3;
+    background-color: #f8f8f8;
+  }
+  
+  .table-div {
+    max-width: 300px; /* 테이블의 원하는 고정 너비를 설정하세요 */
+    margin: 0 auto;
+  }
+  
+  video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+  
+  canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+  
+  #status {
+    margin-top: 20px;
+  }
+  
+  h1 {
+    text-align: center;
   }

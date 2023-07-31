@@ -16,6 +16,10 @@ const configuration = {
 };
 const socket = io();
 let currentRoom = null;
+let face_rage = 0;
+let rage_ratio = 0;
+let sad_ratio = 0;
+let lock = 0;
 
     // 웹캠 스트림 표시를 위한 미디어 장치 요청
     navigator.mediaDevices.getUserMedia({video: true, audio: true})
@@ -24,44 +28,6 @@ let currentRoom = null;
         const roomId = prompt('방 번호를 입력하세요 (1 또는 2):');
         socket.emit('join room', roomId);
         
-        // // 비동기 함수로 만들어서 await 사용
-        // async function captureAndUpload() {
-        //   captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-        //   const imageData = captureCanvas.toDataURL('image/png');
-          
-        //   // 서버로 업로드
-        //   try {
-        //     const response = await fetch('/upload', {
-        //       method: 'POST',
-        //       headers: {
-        //         'Content-Type': 'application/json'
-        //       },
-        //       body: JSON.stringify({ image: imageData })
-        //     });
-        //     const content = await response.json();
-        //     contentDiv.innerHTML = content.msg_helmet; // 내용을 div에 업데이트
-        //     if (currentRoom){
-        //     socket.emit('msg',content.msg_helmet, currentRoom)
-        //     }
-        //     const jsonData = content.graph;
-        
-        //     // 표에 데이터 채우기
-        //     document.getElementById("key1Value").innerText = "*".repeat(parseInt(jsonData["Surprise"]));
-        //     document.getElementById("key2Value").innerText = "*".repeat(parseInt(jsonData["Neutral"]));
-        //     document.getElementById("key3Value").innerText = "*".repeat(parseInt(jsonData["Anger"]));
-        //     document.getElementById("key4Value").innerText = "*".repeat(parseInt(jsonData["Happy"]));
-        //     document.getElementById("key5Value").innerText = "*".repeat(parseInt(jsonData["Sad"]));
-        //     if (currentRoom){
-        //       socket.emit('graph', jsonData, currentRoom);
-        //     }
-            
-        //   } catch (error) {
-        //     console.error('Error uploading image:');
-        //   }
-
-        //   // 0.1초 후에 다음 업로드를 실행 (재귀적 호출)
-        //    setTimeout(captureAndUpload, 100); 
-        // }
         captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
         imageData = captureCanvas.toDataURL('image/png');
         socket.emit('connect_ai',imageData)
@@ -74,13 +40,40 @@ let currentRoom = null;
         })
 
         socket.on('graph', graph => {
-          document.getElementById("key1Value").innerText = "*".repeat(parseInt(graph["Surprise"]));
-          document.getElementById("key2Value").innerText = "*".repeat(parseInt(graph["Neutral"]));
-          document.getElementById("key3Value").innerText = "*".repeat(parseInt(graph["Anger"]));
-          document.getElementById("key4Value").innerText = "*".repeat(parseInt(graph["Happy"]));
-          document.getElementById("key5Value").innerText = "*".repeat(parseInt(graph["Sad"]));
+          document.getElementById("key3Value").innerText = `(${parseInt(graph["Anger"])}%)`+"-".repeat(parseInt(graph["Anger"])/2);
+          sad_ratio = sad_ratio + lock * parseInt(graph["Sad"]);
+          rage_ratio = rage_ratio + lock * parseInt(graph["Anger"]);
+          if (parseInt(graph["Anger"]) > 30)
+          {
+            face_rage = face_rage + 1;
+          }
+          else
+          {
+            face_rage = 0;
+          }
+          if (face_rage > 3)
+          {
+            alert("표정을 조금 부드럽게 지어볼까요?");
+          }
+          if (sad_ratio > 0)
+          {
+            document.getElementById("sad_ratio").innerText = `당신이 상대방보다 ${sad_ratio} 만큼 더 슬픔을 느낍니다.`; 
+          }
+          else 
+          {
+            document.getElementById("sad_ratio").innerText = `상대방이 당신보다 ${sad_ratio * (-1)} 만큼 더 슬픔을 느낍니다.`;
+          }
+          if (rage_ratio > 0)
+          {
+            document.getElementById("rage_ratio").innerText = `당신이 상대방보다 ${rage_ratio} 만큼 더 화를 표출했습니다.`; 
+          }
+          else 
+          {
+            document.getElementById("rage_ratio").innerText = `상대방이 당신보다 ${rage_ratio * (-1)} 만큼 더 화를 표출했습니다.`;
+          }
           socket.emit('graph', graph, currentRoom);
         })
+
         socket.on('msg', msg => {
           contentDiv.innerHTML = msg;
           socket.emit('msg',msg, currentRoom);
@@ -90,11 +83,26 @@ let currentRoom = null;
         })
 
         socket.on('op_graph', op_graph => {
-          document.getElementById("op_key1Value").innerText = "*".repeat(parseInt(op_graph["Surprise"]));
-          document.getElementById("op_key2Value").innerText = "*".repeat(parseInt(op_graph["Neutral"]));
-          document.getElementById("op_key3Value").innerText = "*".repeat(parseInt(op_graph["Anger"]));
-          document.getElementById("op_key4Value").innerText = "*".repeat(parseInt(op_graph["Happy"]));
-          document.getElementById("op_key5Value").innerText = "*".repeat(parseInt(op_graph["Sad"]));
+          lock = 1;
+          document.getElementById("op_key3Value").innerText = `(${parseInt(op_graph["Anger"])}%)`+"-".repeat(parseInt(op_graph["Anger"])/2);
+          sad_ratio = sad_ratio - lock * parseInt(op_graph["Sad"]);
+          rage_ratio = rage_ratio - lock * parseInt(op_graph["Anger"]);
+          if (sad_ratio > 0)
+          {
+            document.getElementById("sad_ratio").innerText = `당신이 상대방보다 ${sad_ratio} 만큼 더 슬픔을 느낍니다.`; 
+          }
+          else 
+          {
+            document.getElementById("sad_ratio").innerText = `상대방이 당신보다 ${sad_ratio * (-1)} 만큼 더 슬픔을 느낍니다.`;
+          }
+          if (rage_ratio > 0)
+          {
+            document.getElementById("rage_ratio").innerText = `당신이 상대방보다 ${rage_ratio} 만큼 더 화를 표출했습니다.`; 
+          }
+          else 
+          {
+            document.getElementById("rage_ratio").innerText = `상대방이 당신보다 ${rage_ratio * (-1)} 만큼 더 화를 표출했습니다.`;
+          }
         })
         socket.on('room joined', (room) => {
           currentRoom = room;
@@ -103,10 +111,11 @@ let currentRoom = null;
           alert('방이 가득 찼습니다. 다른 방에 접속해주세요.');
         });
         socket.on('user joined', (userId) => {
-          alert(userId + '님이 방에 참여했습니다.');
+          lock = 1;
         });
         socket.on('user left', (userId) => {
-          alert(userId + '님이 방을 나갔습니다.');
+          alert('상대방이 종료했습니다.');
+          lock = 0;
         });
     
     

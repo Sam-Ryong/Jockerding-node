@@ -6,20 +6,22 @@
     <title>Home</title>
   </head>
   <body>
-    <h2>이게 보이면 성공인걸까?..</h2>
-    <p>개인 홈페이지를 만들어야하는걸까..?</p>
-    <!-- 버튼 태그 -->
-    <button id="myButton">이제부터 존댓말할까요</button>
+    <h2>싸우지 않기 위해 노력하는 당신</h2>
+    <p>제법 성숙할지도..?</p>
+    <!-- 버튼 태그
+    <button id="linkButton">커플 연결하기</button> -->
 
+    <button id="signup">회원가입</button>
+    <button id="signin">로그인</button>
+    <a href="./signup" class="btn btn-outline-primary">회원가입</a>
+    <a href="./signin" class="btn btn-outline-primary">로그인</a>
     <!-- 자바스크립트 -->
     <script>
-      document
-        .getElementById("myButton")
-        .addEventListener("click", function () {
-          // 여기에 이동하길 원하는 페이지의 URL을 입력하세요.
-          var targetUrl = "https://zackinthebox.tech";
-          window.location.href = targetUrl;
-        });
+      document.getElementById("signin").addEventListener("click", function () {
+        // 여기에 이동하길 원하는 페이지의 URL을 입력하세요.
+        var targetUrl = "./signin";
+        window.location.href = targetUrl;
+      });
     </script>
   </body>
 </html>

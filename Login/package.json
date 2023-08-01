@@ -1,23 +1,33 @@
 {
-  "name": "login",
+  "name": "node-js-jwt-auth-mongodb",
   "version": "1.0.0",
-  "description": "Trying Login implement",
+  "description": "Node.js + MongoDB: JWT Authentication & Authorization",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
-    "server": "nodemon server"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "node.js",
+    "express",
+    "jwt",
+    "login",
+    "registration",
+    "authentication",
+    "authorization",
+    "mongodb",
+    "mongoose"
+  ],
+  "author": "bezkoder",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "config": "^3.3.9",
-    "cookie-parser": "^1.4.6",
+    "cookie-session": "^2.0.0",
+    "cors": "^2.8.5",
     "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.1",
-    "mongoose": "^7.4.0",
-    "nodemon": "^3.0.1",
-    "uuid": "^9.0.0"
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^6.11.2",
+    "nanoid": "^4.0.2",
+    "path": "^0.12.7",
+    "randomstring": "^1.3.0"
   }
 }

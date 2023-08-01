@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+  </head>
+  <body>
+    <h2>이게 보이면 성공인걸까?..</h2>
+    <p>개인 홈페이지를 만들어야하는걸까..?</p>
+    <!-- 버튼 태그
+    <button id="linkButton">커플 연결하기</button> -->
+
+    <button id="fightButton">이제부터 존댓말할까요</button>
+
+    <!-- 자바스크립트 -->
+    <script>
+      document
+        .getElementById("fightButton")
+        .addEventListener("click", function () {
+          // 여기에 이동하길 원하는 페이지의 URL을 입력하세요.
+          var targetUrl = "https://zackinthebox.tech";
+          window.location.href = targetUrl;
+        });
+    </script>
+  </body>
+</html>

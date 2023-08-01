@@ -8,17 +8,17 @@
   <body>
     <h3>회원가입 페이지</h3>
     <div class="container mt-4">
-      <form action="/api/register" method="post">
+      <form action="/api/auth/signup" method="post">
         <fieldset>
           <legend>register</legend>
-          <label for="name">name</label>
-          <input type="text" id="name" name="name" />
+          <label for="username">username</label>
+          <input type="text" id="username" name="username" />
           <label for="email">email</label>
           <input type="email" id="email" name="email" />
           <label for="password">password</label>
           <input type="password" id="password" name="password" />
-          <label for="opponent">짝꿍의 이메일</label>
-          <input type="opponent" id="opponent" name="opponent" />
+          <label for="partnerMail">짝꿍의 이메일</label>
+          <input type="email" id="partnerMail" name="partnerMail" />
           <!-- <button id="invite">
             초대장 보내기
           </button>
@@ -31,7 +31,7 @@
           <button id="connect">상대방 코드 입력하기</button> -->
 
           <button type="submit">sign up</button>
-          <a href="./auth" class="btn btn-outline-primary">Log in</a>
+          <a href="./signin" class="btn btn-outline-primary">Log in</a>
         </fieldset>
       </form>
     </div>

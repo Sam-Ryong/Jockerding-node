@@ -148,9 +148,9 @@ let lock = 0;
         });
 
         // ICE candidate 보내기
-        peerConnection.onicecandidate = async (event) => {
+        peerConnection.onicecandidate = (event) => {
           if (event.candidate) {
-            await socket.emit('ice-candidate', event.candidate, currentRoom);
+            socket.emit('ice-candidate', event.candidate, currentRoom);
           }
         };
 

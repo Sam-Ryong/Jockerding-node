@@ -31,11 +31,10 @@ router.get("/", async (req, res) => {
       document
         .getElementById("fightButton")
         .addEventListener("click", function () {
-          var targetUrl = "https://zackinthebox.tech/";
+          var targetUrl = "/chat";
           window.location.href = targetUrl;
         });
     </script>
-
   </body>
   </html>
   `;

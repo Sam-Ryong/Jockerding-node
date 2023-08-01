@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const https = require("https");
 const cookieSession = require("cookie-session");
+const bodyParser = require('body-parser');
 const authJwt = require("./app/middlewares/authJwt");
 const dbConfig = require("./app/config/db.config");
 const db = require("./app/models");
@@ -40,10 +41,10 @@ configureSocket(server);
 require("./app/routes/auth.routes")(app);
 
 // 미들웨어 설정과 정적 파일 서비스
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'chat_html')));
 app.use(redirectToHttps);
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true}));
 app.use(
   cookieSession({
     name: "bezkoder-session",

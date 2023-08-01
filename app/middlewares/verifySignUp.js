@@ -3,6 +3,7 @@ const User = db.user;
 
 checkDuplicateEmail = (req, res, next) => {
   // Email
+  console.log(req.body);
   User.findOne({
     email: req.body.email,
   }).exec((err, user) => {

@@ -31,7 +31,7 @@ router.get("/", async (req, res) => {
       document
         .getElementById("fightButton")
         .addEventListener("click", function () {
-          var targetUrl = "https://zackinthebox.tech/";
+          var targetUrl = "http://zackinthebox.tech:3000/chat";
           window.location.href = targetUrl;
         });
     </script>

@@ -7,6 +7,7 @@ const mypage = require("./mypage.js");
 const link = require("./link.js");
 const app = express();
 const https = require("https");
+const fs = require("fs");
 const options = {
   key: fs.readFileSync("config/private.key"),
   cert: fs.readFileSync("config/certificate.crt"),

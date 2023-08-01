@@ -22,18 +22,14 @@ router.get("/", async (req, res) => {
   </head>
   <body>
     <h2>${req.user.username}와 ${partner}</h2>
-
     <a href="./link">커플 연결하기</a>
-    <button id="fightButton">이제부터 존댓말할까요</button>
+    <form id="myForm" action="/chat" method="post">
+    <input type="hidden" name="message" id="message value="${req.user.code}">
+    <button type="submit">이제부터 존댓말 할까요</button>
+    </form>
     <form action="/api/auth/signout" method="post">
     <button id="signout">로그아웃</button></form>
     <script>
-      document
-        .getElementById("fightButton")
-        .addEventListener("click", function () {
-          var targetUrl = "https://zackinthebox.tech:3000/chat";
-          window.location.href = targetUrl;
-        });
     </script>
 
   </body>

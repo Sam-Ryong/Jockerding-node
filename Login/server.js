@@ -5,6 +5,7 @@ const authJwt = require("./app/middlewares/authJwt");
 const dbConfig = require("./app/config/db.config");
 const mypage = require("./mypage.js");
 const link = require("./link.js");
+const axios = require("axios");
 const app = express();
 const https = require("https");
 const fs = require("fs");
@@ -175,6 +176,18 @@ app.use("/api/auth/link", async (req, res) => {
     }
   }
 });
+
+app.post("/chat", async (req, res) => {
+  try {
+    const response = await axios.post('https://zackinthebox.tech:3000/chat', {
+      code: req.body.message,
+    });
+    res.sendFile(response.data);
+  }
+    catch (error) {
+      res.send(err);
+    }
+})
 
 app.get("/signup", async (req, res) => {
   await res.sendFile(__dirname + "/register.html");

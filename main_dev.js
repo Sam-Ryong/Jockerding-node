@@ -40,11 +40,8 @@ app.use('/',chatrouter);
 
 
 
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
-});
 
 
-server.listen(443, () => {
-  console.log(`HTTPS server started on port 443`);
+server.listen(3000, () => {
+  console.log(`HTTPS server started on port 3000`);
 });

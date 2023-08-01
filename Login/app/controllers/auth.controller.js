@@ -62,7 +62,7 @@ exports.signin = (req, res) => {
 
     req.session.token = token;
     console.log(req.session.token);
-    // res.redirect("/mypage");
+    res.redirect("/mypage");
   });
 };
 

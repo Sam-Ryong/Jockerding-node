@@ -23,10 +23,7 @@ router.get("/", async (req, res) => {
   <body>
     <h2>${req.user.username}와 ${partner}</h2>
     <a href="./link">커플 연결하기</a>
-    <form id="myForm" action="/chat" method="post">
-    <input type="hidden" name="message" id="message value="${req.user.code}">
-    <button type="submit">이제부터 존댓말 할까요</button>
-    </form>
+    <button><a href = "https://zackinthebox.tech:3000/chat">이제부터 존댓말 할까요<a></button>
     <form action="/api/auth/signout" method="post">
     <button id="signout">로그아웃</button></form>
     <script>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+  </head>
+  <body>
+    <h3>로그인 페이지</h3>
+    <form action="/api/auth/signin" method="POST">
+      <fieldset>
+        <legend>login</legend>
+        <!-- <label for="name">name</label>
+        <input type="text" id="name" name="name" /> -->
+        <label for="email">email</label>
+        <input type="email" id="email" name="email" />
+        <label for="password">password</label>
+        <input type="password" id="password" name="password" />
+        <button type="submit">sign in</button>
+        <a href="./signup" class="btn btn-outline-primary">Sign up</a>
+      </fieldset>
+    </form>
+  </body>
+</html>

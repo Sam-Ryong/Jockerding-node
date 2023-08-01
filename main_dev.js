@@ -2,9 +2,21 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const bodyParser = require('body-parser');
 const https = require("https");
-const chatrouter = require('./routers/webchatrout.js');
+const cookieSession = require("cookie-session");
+const authJwt = require("./app/middlewares/authJwt");
+const dbConfig = require("./app/config/db.config");
+const db = require("./app/models");
+const User = db.user;
+
+
+//라우터들
+const chaenrouter = require('./routers/chaenrouter.js');
+const chatrouter = require('./routers/chatrouter.js');
+const mypage = require("./routers/mypage.js");
+const link = require("./routers/link.js");
+//
+
 const configureSocket = require('./handler/socketHandler.js');
 
 
@@ -25,32 +37,84 @@ const redirectToHttps = (req, res, next) => {
 const app = express();
 const server = https.createServer(options, app);
 configureSocket(server);
-
+require("./app/routes/auth.routes")(app);
 
 // 미들웨어 설정과 정적 파일 서비스
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(redirectToHttps);
-app.use(bodyParser.json({ limit: '10mb' }));
-app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(
+  cookieSession({
+    name: "bezkoder-session",
+    keys: ["COOKIE_SECRET"], // should use as secret environment variable
+    httpOnly: true,
+  })
+);
+app.use(authJwt.verifyToken);
 
+// db
+db.mongoose
+  .connect(`mongodb+srv://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Successfully connect to MongoDB.");
+  })
+  .catch((err) => {
+    console.error("Connection error", err);
+    process.exit();
+  });
 
 
 //Route 정보
-app.use('/',chatrouter);
+app.use('/chat',chatrouter);
+app.use('/',chaenrouter);
+app.use("/mypage", mypage);
+app.use("/link", link);
+app.use("/api/auth/link", async (req, res) => {
+  req.user = await User.findById(req.userId);
+  const partner = await User.findOne({ code: req.body.oppo_code });
+  console.log(req.userId);
 
+  if (!partner) {
+    return res.status(404).send({ message: "User Not found." });
+  } else {
+    console.log(partner);
+    //partner 찾았으면
+    // const emailCheck = await(partner.email === req.user.partnerMail);
+    console.log(partner.email);
+    console.log(req.user.partnerMail);
 
+    if (partner.email == req.user.partnerMail) {
+      //emailCheck == true이면
+      console.log(partner.email == req.user.partnerMail);
+      console.log(
+        partner.code + partner.username + partner.id + req.user.username
+      );
+      await User.findByIdAndUpdate(
+        req.userId,
+        {
+          code: partner.code,
+          linked: true,
+          oppo_name: partner.username,
+        },
+        { new: true }
+      );
+      await User.findByIdAndUpdate(
+        partner.id,
+        {
+          linked: true,
+          oppo_name: req.user.username,
+        },
+        { new: true }
+      );
 
-
-
-
-
-
-
-
-
-
-
-
+      res.redirect("/mypage");
+    }
+  }
+});
 
 
 

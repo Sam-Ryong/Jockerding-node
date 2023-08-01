@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 //middleware 불러오기
-const db = require("./app/models");
+const db = require("../app/models");
 const User = db.user;
 
 router.get("/", async (req, res) => {

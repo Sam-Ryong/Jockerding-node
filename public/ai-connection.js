@@ -130,9 +130,6 @@ let ready = 0;
             .then(answer => peerConnection.setLocalDescription(answer))
             .then(async () => {
               await socket.emit('answer', peerConnection.localDescription, currentRoom);
-              captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-              imageData = captureCanvas.toDataURL('image/png');
-              socket.emit('connect_ai', imageData);
             });
         });
 
@@ -155,12 +152,9 @@ let ready = 0;
         };
 
         // 원격 비디오 스트림 받기
-        peerConnection.ontrack = (event) => {
+        peerConnection.ontrack = async (event) => {
           const track = event.track;
-          if (track.kind === 'video') {
-            remoteVideo.srcObject = event.streams[0];
-          }
-          remoteVideo.srcObject = event.streams[0];
+          remoteVideo.srcObject = event.streams[0]; 
         };
 
 

@@ -42,13 +42,7 @@ function configureSocket(server) {
             });
             socket.emit('msg',response.data.msg_helmet);
             socket.emit('graph',response.data.graph);
-            if (rooms[room] && rooms[room].length === 2) {
-              socket.emit('connected_ai');
-              return;
-            }
-            else {
-              return;
-            }
+            socket.emit('connected_ai');
           }
             catch (error) {
               console.log("err");

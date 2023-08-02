@@ -25,6 +25,9 @@ module.exports = (code) => { return `<!DOCTYPE html>
             <div id="status">준비 중...</div>
             <div id="rage_ratio"></div>
             <div id="sad_ratio"></div>
+            <div class="graph-container">
+                <canvas id="rageSadChart"></canvas>
+            </div>
         </div>
         <div class="center-pane">
 

@@ -179,3 +179,45 @@ let ready = 0;
         console.error('Error accessing webcam:', error);
       });
       
+      const graphData = {
+        labels: ['Rage', 'Sad'],
+        datasets: [
+            {
+                label: 'Rage Ratio',
+                data: [rage_ratio, 0], // 초기값으로 rage_ratio 설정, sad_ratio는 0으로 설정
+                backgroundColor: 'rgba(255, 99, 132, 0.2)', // 그래프 색상 설정
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+            },
+            {
+                label: 'Sad Ratio',
+                data: [0, sad_ratio], // 초기값으로 sad_ratio 설정, rage_ratio는 0으로 설정
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+            },
+        ],
+    };
+    
+    const graphOptions = {
+        scales: {
+            y: {
+                beginAtZero: true,
+            },
+        },
+    };
+    
+    // 그래프 생성 및 업데이트
+    const ctx = document.getElementById('rageSadChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'bar', // 막대 그래프로 설정
+        data: graphData,
+        options: graphOptions,
+    });
+    
+    // sad_ratio와 rage_ratio 업데이트 시 그래프도 업데이트
+    function updateGraph() {
+        myChart.data.datasets[0].data = [rage_ratio, 0];
+        myChart.data.datasets[1].data = [0, sad_ratio];
+        myChart.update();
+    }

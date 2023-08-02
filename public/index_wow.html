@@ -23,6 +23,9 @@
             <video id="webcamStream" autoplay muted></video>
             <canvas id="captureCanvas" width="644" height="548" style="display: none;"></canvas>
             <div id="status">준비 중...</div>
+            <div class="graph-container">
+                <canvas id="rageSadChart"></canvas>
+            </div>
             <div id="rage_ratio"></div>
             <div id="sad_ratio"></div>
         </div>
@@ -43,7 +46,7 @@
 
     </div>
     <!-- script.js 파일 로드 -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>
     <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"></script>
     <script src="ai-connection.js"></script>
 </body>

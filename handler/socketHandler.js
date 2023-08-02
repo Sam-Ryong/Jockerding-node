@@ -41,12 +41,11 @@ function configureSocket(server) {
               base64Data: base64Data,
             });
             socket.emit('msg',response.data.msg_helmet);
-            if (response.data.msg_helmet != "No face detected.")
-            {
-              socket.emit('graph',response.data.graph);
-            }
+            socket.emit('graph',response.data.graph);
+            if (rooms[room] && rooms[room].length === 2) {
               socket.emit('connected_ai');
-            
+              return;
+            }
           }
             catch (error) {
               console.log("err");

@@ -34,7 +34,7 @@ body {
   margin: 0;
 }
 
-h2 {
+h1 {
   font-family: "NeoDunggeunmoPro-Regular";
   font-size: 50px;
   /* font-weight: bold; */
@@ -154,7 +154,7 @@ form {
   box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.3);
 }
 
-.container {
+.left-pane, .center-pane, .right-pane {
   /* display: flex;
   flex-direction: column; 
   justify-content: center; 
@@ -168,6 +168,7 @@ form {
   width: 600px;
   max-width: 100%;
   min-height: 700px;
+  
 }
 
 .form-container {
@@ -189,11 +190,11 @@ form {
   z-index: 2;
 }
 
-.left-pane, .center-pane, .right-pane {
+/* .left-pane, .center-pane, .right-pane {
   flex: 1;
   padding: 20px;
   box-sizing: border-box;
-}
+} */
 
 #table-div {
   margin-bottom: 20px;

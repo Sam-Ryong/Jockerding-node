@@ -143,7 +143,6 @@ let lock = 0;
           await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
           captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
           imageData = captureCanvas.toDataURL('image/png');
-          socket.emit('connect_ai', imageData);
         });
 
         // ICE candidate 보내기
@@ -167,6 +166,7 @@ let lock = 0;
         peerConnection.oniceconnectionstatechange = () => {
           if (peerConnection.iceConnectionState === 'connected') {
             statusDiv.innerHTML = '음성 채팅 중...';
+            socket.emit('connect_ai');
           } else if (peerConnection.iceConnectionState === 'disconnected') {
             statusDiv.innerHTML = '연결이 끊어졌습니다. 다시 연결 중';
             remoteVideo.srcObject = null;

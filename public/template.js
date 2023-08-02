@@ -30,13 +30,7 @@ module.exports = (code) => { return `<!DOCTYPE html>
 
         <div id="rage_ratio"></div>
         <div id="sad_ratio"></div>
-        <div class="graph-container">
-            <canvas id="rageSadChart"></canvas>
-        </div>
-        <div class="gauge-container">
-        <canvas id="rageGauge"></canvas>
-        </div>
-
+      
         </div>
 
         <div class="right-pane">

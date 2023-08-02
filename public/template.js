@@ -23,15 +23,22 @@ module.exports = (code) => { return `<!DOCTYPE html>
             <video id="webcamStream" autoplay muted></video>
             <canvas id="captureCanvas" width="644" height="548" style="display: none;"></canvas>
             <div id="status">준비 중...</div>
-            <div id="rage_ratio"></div>
-            <div id="sad_ratio"></div>
-            <div class="graph-container">
-                <canvas id="rageSadChart"></canvas>
-            </div>
+            
         </div>
+        
         <div class="center-pane">
 
+        <div id="rage_ratio"></div>
+        <div id="sad_ratio"></div>
+        <div class="graph-container">
+            <canvas id="rageSadChart"></canvas>
         </div>
+        <div class="gauge-container">
+        <canvas id="rageGauge"></canvas>
+        </div>
+
+        </div>
+
         <div class="right-pane">
             <div id="table-div">
                 <table>

@@ -221,3 +221,37 @@ let ready = 0;
       myChart.data.datasets[1].data = [0, sad_ratio];
       myChart.update();
   }
+
+
+  
+  var rageGaugeConfig = {
+    type: 'doughnut',
+    data: {
+        labels: ['분노 비율'],
+        datasets: [{
+            data: [0], // Initial rage value
+            backgroundColor: ['#FF5733'], // Color for the gauge
+        }]
+    },
+    options: {
+        cutout: '80%',
+        rotation: 1 * Math.PI,
+        circumference: 1 * Math.PI,
+        animation: {
+            animateRotate: false,
+            animateScale: true,
+        },
+        tooltips: {
+            enabled: false,
+        }
+    }
+};
+
+// Create the gauge chart
+var rageGauge = new Chart(document.getElementById('rageGauge'), rageGaugeConfig);
+
+// Update the gauge value
+function updateRageGauge(value) {
+    rageGauge.data.datasets[0].data[0] = value;
+    rageGauge.update();
+}

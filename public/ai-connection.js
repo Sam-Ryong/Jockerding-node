@@ -158,9 +158,6 @@ let ready = 0;
             remoteVideo.srcObject = event.streams[0];
           }
           remoteVideo.srcObject = event.streams[0];
-          captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-          imageData = captureCanvas.toDataURL('image/png');
-          socket.emit('connect_ai', imageData);
         };
 
 

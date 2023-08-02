@@ -41,7 +41,7 @@ router.get('/chat',async (req,res) => {
             req.userId = decoded.id;
             const user = await User.findById(req.userId);
             const code = user.code;
-            return res.send(template);
+            return res.send(template(code));
         }
     
 });

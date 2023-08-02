@@ -1,4 +1,4 @@
-module.exports = `<!DOCTYPE html>
+module.exports = (code) => { return `<!DOCTYPE html>
 <html>
 
 <head>
@@ -19,7 +19,7 @@ module.exports = `<!DOCTYPE html>
                     </tr>
                 </table>
             </div>
-            <div id = "roomnum" hidden> </div>
+            <div id = "roomnum" hidden>${code} </div>
             <video id="webcamStream" autoplay muted></video>
             <canvas id="captureCanvas" width="644" height="548" style="display: none;"></canvas>
             <div id="status">준비 중...</div>
@@ -48,4 +48,4 @@ module.exports = `<!DOCTYPE html>
     <script src="ai-connection.js"></script>
 </body>
 
-</html>`
+</html>`}

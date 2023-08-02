@@ -210,10 +210,10 @@ let ready = 0;
     // 그래프 생성 및 업데이트
     const ctx = document.getElementById('rageSadChart').getContext('2d');
     const myChart = new Chart(ctx, {
-        type: 'bar', // 막대 그래프로 설정
-        data: graphData,
-        options: graphOptions,
-    });
+      type: 'horizontalBar', // 수평 막대 그래프로 설정
+      data: graphData,
+      options: graphOptions,
+  });
     
     // sad_ratio와 rage_ratio 업데이트 시 그래프도 업데이트
     function updateGraph() {

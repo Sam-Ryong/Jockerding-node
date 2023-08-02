@@ -8,8 +8,8 @@
 
 <body>
     <h1>화상채팅</h1>
+    <div id="roomnum" hidden>${code}</div>
     <div class="container">
-        <div class="content" hidden></div>
         <div class="left-pane">
             <div id="table-div">
                 <table>
@@ -20,17 +20,15 @@
                 </table>
             </div>
 
-            <video id="webcamStream" autoplay muted></video>
-            <canvas id="captureCanvas" width="644" height="548" style="display: none;"></canvas>
-            <div id="status">준비 중...</div>
+            <video id="webcamStream" autoplay muted height="360"></video>
+            <div class="video-info">Webcam</div>
+        </div>
+        <div class="center-pane">
             <div class="graph-container">
                 <canvas id="rageSadChart"></canvas>
             </div>
             <div id="rage_ratio"></div>
             <div id="sad_ratio"></div>
-        </div>
-        <div class="center-pane">
-
         </div>
         <div class="right-pane">
             <div id="table-div">
@@ -41,9 +39,9 @@
                     </tr>
                 </table>
             </div>
-            <video id="remoteVideo" width="644" height="548" autoplay></video>
+            <video id="remoteVideo" autoplay height="360"></video>
+            <div class="video-info">Remote Video</div>
         </div>
-
     </div>
     <!-- script.js 파일 로드 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>

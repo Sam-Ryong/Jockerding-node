@@ -19,7 +19,7 @@ let currentRoom = null;
 let face_rage = 0;
 let rage_ratio = 0;
 let sad_ratio = 0;
-let lock = 0;
+let ready = 0;
 
     // 웹캠 스트림 표시를 위한 미디어 장치 요청
     navigator.mediaDevices.getUserMedia({video: true, audio: true})
@@ -28,6 +28,8 @@ let lock = 0;
         socket.emit('join room', roomnum.innerText);
 
         var peerConnection = new RTCPeerConnection(configuration);
+        captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+        imageData = captureCanvas.toDataURL('image/png');
 
         socket.on('connected_ai', () => {
           captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
@@ -37,8 +39,8 @@ let lock = 0;
 
         socket.on('graph', graph => {
           document.getElementById("key3Value").innerText = `(${parseInt(graph["Anger"])}%)`+"-".repeat(parseInt(graph["Anger"])/2);
-          sad_ratio = sad_ratio + lock * parseInt(graph["Sad"]);
-          rage_ratio = rage_ratio + lock * parseInt(graph["Anger"]);
+          sad_ratio = sad_ratio + parseInt(graph["Sad"]);
+          rage_ratio = rage_ratio + parseInt(graph["Anger"]);
           if (parseInt(graph["Anger"]) > 30)
           {
             face_rage = face_rage + 1;
@@ -79,10 +81,9 @@ let lock = 0;
         })
 
         socket.on('op_graph', op_graph => {
-          lock = 1;
           document.getElementById("op_key3Value").innerText = `(${parseInt(op_graph["Anger"])}%)`+"-".repeat(parseInt(op_graph["Anger"])/2);
-          sad_ratio = sad_ratio - lock * parseInt(op_graph["Sad"]);
-          rage_ratio = rage_ratio - lock * parseInt(op_graph["Anger"]);
+          sad_ratio = sad_ratio - parseInt(op_graph["Sad"]);
+          rage_ratio = rage_ratio - parseInt(op_graph["Anger"]);
           if (sad_ratio > 0)
           {
             document.getElementById("sad_ratio").innerText = `당신이 상대방보다 ${sad_ratio} 만큼 더 슬픔을 느낍니다.`; 
@@ -108,11 +109,9 @@ let lock = 0;
         });
         socket.on('user joined', (userId) => {
           alert('상대방이 접속했습니다.');
-          lock = 1;
         });
         socket.on('user left', (userId) => {
           alert('상대방이 종료했습니다.');
-          lock = 0;
         });
     
     
@@ -128,32 +127,52 @@ let lock = 0;
           peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
           peerConnection.createAnswer()
             .then(answer => peerConnection.setLocalDescription(answer))
-            .then(() => {
-              socket.emit('answer', peerConnection.localDescription, currentRoom);
+            .then(async () => {
+              await socket.emit('answer', peerConnection.localDescription, currentRoom);
+              ready = ready + 1;
+              if (ready == 2)
+              {
+                captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+                imageData = captureCanvas.toDataURL('image/png');
+                socket.emit('connect_ai', imageData);
+              }
             });
         });
 
         // answer 받기
-        socket.on('answer', answer => {
-          peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+        socket.on('answer', async (answer) => {
+          await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+          ready = ready + 1;
+          if (ready == 2)
+              {
+                captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+                imageData = captureCanvas.toDataURL('image/png');
+                socket.emit('connect_ai', imageData);
+              }
         });
 
         // ICE candidate 받기
         socket.on('ice-candidate', async (candidate) => {
           await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-          captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-          imageData = captureCanvas.toDataURL('image/png');
+          ready = ready + 1;
+          if (ready == 2)
+              {
+                captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+                imageData = captureCanvas.toDataURL('image/png');
+                socket.emit('connect_ai', imageData);
+              }
         });
 
         // ICE candidate 보내기
         peerConnection.onicecandidate = (event) => {
           if (event.candidate) {
             socket.emit('ice-candidate', event.candidate, currentRoom);
+
           }
         };
 
         // 원격 비디오 스트림 받기
-        peerConnection.ontrack = event => {
+        peerConnection.ontrack = (event) => {
           const track = event.track;
           if (track.kind === 'video') {
             remoteVideo.srcObject = event.streams[0];
@@ -166,7 +185,6 @@ let lock = 0;
         peerConnection.oniceconnectionstatechange = () => {
           if (peerConnection.iceConnectionState === 'connected') {
             statusDiv.innerHTML = '음성 채팅 중...';
-            socket.emit('connect_ai');
           } else if (peerConnection.iceConnectionState === 'disconnected') {
             statusDiv.innerHTML = '연결이 끊어졌습니다. 다시 연결 중';
             remoteVideo.srcObject = null;

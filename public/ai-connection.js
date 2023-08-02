@@ -210,14 +210,14 @@ let ready = 0;
     // 그래프 생성 및 업데이트
     const ctx = document.getElementById('rageSadChart').getContext('2d');
     const myChart = new Chart(ctx, {
-      type: 'horizontalBar', // 수평 막대 그래프로 설정
+      type: 'bar', // 막대 그래프로 설정
       data: graphData,
       options: graphOptions,
   });
     
     // sad_ratio와 rage_ratio 업데이트 시 그래프도 업데이트
     function updateGraph() {
-        myChart.data.datasets[0].data = [rage_ratio, 0];
-        myChart.data.datasets[1].data = [0, sad_ratio];
-        myChart.update();
-    }
+      myChart.data.datasets[0].data = [rage_ratio, 0];
+      myChart.data.datasets[1].data = [0, sad_ratio];
+      myChart.update();
+  }

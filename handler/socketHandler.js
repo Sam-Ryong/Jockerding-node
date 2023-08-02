@@ -34,7 +34,7 @@ function configureSocket(server) {
       
       
         // 클라이언트가 offer를 보내면 다른 사용자에게 전달
-        socket.on('connect_ai', async (imageData) => {
+        socket.on('connect_ai', async (room, imageData) => {
           base64Data = imageData.replace(/^data:image\/png;base64,/, '');
           try {
             const response = await axios.post('http://localhost:5000/predict', {
@@ -45,7 +45,9 @@ function configureSocket(server) {
             {
               socket.emit('graph',response.data.graph);
             }
-            socket.emit('connected_ai');
+
+            if (rooms.room.length == 2)
+              {socket.emit('connected_ai');}
             
           }
             catch (error) {

@@ -171,9 +171,9 @@ form {
   
 }
 
-.form-container {
+.container {
   display: flex;
-  flex-direction: column; /* 요소들을 세로 방향으로 배치 */
+  flex-direction: row; /* 요소들을 세로 방향으로 배치 */
   justify-content: center; /* 세로 방향에서 가운데로 정렬 */
   align-items: center;
   position: relative;

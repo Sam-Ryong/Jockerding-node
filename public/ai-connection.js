@@ -6,7 +6,7 @@ const contentDiv = document.getElementById('content');
 const op_contentDiv = document.getElementById('op_content');
 const outputDiv = document.getElementById('output');
 const statusDiv = document.getElementById('status');
-
+const roomnum = document.getElementById('roomnum');
 const configuration = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
@@ -25,7 +25,7 @@ let lock = 0;
     navigator.mediaDevices.getUserMedia({video: true, audio: true})
       .then(async (stream) => {
         webcamStream.srcObject = stream;
-        socket.emit('join room', document.getElementById('roomnum'));
+        socket.emit('join room', roomnum.innerText);
 
         var peerConnection = new RTCPeerConnection(configuration);
 

@@ -6,7 +6,7 @@ const path = require("path");
 
 verifyToken = async (req, res, next) => {
   let token = await req.session.token;
-
+  
   if (!token) {
     // return res.sendFile(path.join(__dirname + "../..", "home.html"));
     // return res.redirect("/signin");

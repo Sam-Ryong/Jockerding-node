@@ -46,6 +46,9 @@ function configureSocket(server) {
               socket.emit('connected_ai');
               return;
             }
+            else {
+              return;
+            }
           }
             catch (error) {
               console.log("err");

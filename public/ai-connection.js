@@ -107,21 +107,20 @@ let ready = 0;
         socket.on('room full', () => {
           alert('방이 가득 찼습니다. 다른 방에 접속해주세요.');
         });
-        socket.on('user joined', (userId) => {
+        socket.on('user joined', async (userId) => {
           alert('상대방이 접속했습니다.');
-        });
-        socket.on('user left', (userId) => {
-          alert('상대방이 종료했습니다.');
-        });
-    
-    
-        // offer 보내기
-        await peerConnection.addStream(stream);
+          // offer 보내기
+          await peerConnection.addStream(stream);
         peerConnection.createOffer()
           .then(offer => peerConnection.setLocalDescription(offer))
           .then(() => {
             socket.emit('offer', peerConnection.localDescription, currentRoom);
           });
+        });
+        socket.on('user left', (userId) => {
+          alert('상대방이 종료했습니다.');
+        });
+    
         // offer 받기
         socket.on('offer', offer => {
           peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
@@ -147,7 +146,6 @@ let ready = 0;
         peerConnection.onicecandidate = (event) => {
           if (event.candidate) {
             socket.emit('ice-candidate', event.candidate, currentRoom);
-
           }
         };
 

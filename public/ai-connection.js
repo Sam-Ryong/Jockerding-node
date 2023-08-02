@@ -111,11 +111,20 @@ let ready = 0;
           alert('상대방이 접속했습니다.');
           // offer 보내기
           await peerConnection.addStream(stream);
-        peerConnection.createOffer()
+          peerConnection.createOffer()
           .then(offer => peerConnection.setLocalDescription(offer))
           .then(() => {
             socket.emit('offer', peerConnection.localDescription, currentRoom);
           });
+
+          // 원격 비디오 스트림 받기
+          peerConnection.ontrack = (event) => {
+          const track = event.track;
+          if (track.kind === 'video') {
+            remoteVideo.srcObject = event.streams[0];
+          }
+          remoteVideo.srcObject = event.streams[0];
+        };
         });
         socket.on('user left', (userId) => {
           alert('상대방이 종료했습니다.');
@@ -149,14 +158,7 @@ let ready = 0;
           }
         };
 
-        // 원격 비디오 스트림 받기
-        peerConnection.ontrack = (event) => {
-          const track = event.track;
-          if (track.kind === 'video') {
-            remoteVideo.srcObject = event.streams[0];
-          }
-          remoteVideo.srcObject = event.streams[0];
-        };
+        
 
 
         // 연결 상태 이벤트 처리

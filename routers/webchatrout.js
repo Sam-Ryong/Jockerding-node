@@ -3,8 +3,24 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const path = require('path');
 const cookieSession = require("cookie-session");
-const db = require("../Login/app/models/index");
+const db = require("../Login/app/models/index.js");
+const dbConfig = require("../Login/app/config/db.config");
+const template = require("../public/template.js");
 const User = db.user;
+
+db.mongoose
+  .connect(`mongodb+srv://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Successfully connect to MongoDB.");
+    // initial();
+  })
+  .catch((err) => {
+    console.error("Connection error", err);
+    process.exit();
+  });
 
 router.use(
   cookieSession({
@@ -22,12 +38,10 @@ router.get('/chat',async (req,res) => {
             });
         }
         else{
-
             req.userId = decoded.id;
             const user = await User.findById(req.userId);
             const code = user.code;
-            console.log(code);
-            res.sendFile(path.resolve(__dirname, "../public/index_wow.html"));
+            return res.send(template);
         }
     
 });

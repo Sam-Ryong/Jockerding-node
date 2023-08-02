@@ -25,8 +25,7 @@ let lock = 0;
     navigator.mediaDevices.getUserMedia({video: true, audio: true})
       .then(async (stream) => {
         webcamStream.srcObject = stream;
-        const roomId = prompt('방 번호를 입력하세요 (1 또는 2):');
-        socket.emit('join room', roomId);
+        socket.emit('join room', document.getElementById('roomnum'));
 
         var peerConnection = new RTCPeerConnection(configuration);
 

@@ -45,9 +45,7 @@ function configureSocket(server) {
             {
               socket.emit('graph',response.data.graph);
             }
-
-            if (rooms[room].length == 2)
-              {socket.emit('connected_ai');}
+              socket.emit('connected_ai');
             
           }
             catch (error) {

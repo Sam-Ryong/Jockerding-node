@@ -28,8 +28,6 @@ let ready = 0;
         socket.emit('join room', roomnum.innerText);
 
         var peerConnection = new RTCPeerConnection(configuration);
-        captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-        imageData = captureCanvas.toDataURL('image/png');
 
         socket.on('connected_ai', () => {
       
@@ -131,38 +129,18 @@ let ready = 0;
             .then(answer => peerConnection.setLocalDescription(answer))
             .then(async () => {
               await socket.emit('answer', peerConnection.localDescription, currentRoom);
-              ready = ready + 1;
-              if (ready == 2)
-              {
-                captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-                imageData = captureCanvas.toDataURL('image/png');
-                socket.emit('connect_ai', imageData);
-              }
             });
         });
 
         // answer 받기
         socket.on('answer', async (answer) => {
           await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-          ready = ready + 1;
-          if (ready == 2)
-              {
-                captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-                imageData = captureCanvas.toDataURL('image/png');
-                socket.emit('connect_ai', imageData);
-              }
+
         });
 
         // ICE candidate 받기
         socket.on('ice-candidate', async (candidate) => {
           await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-          ready = ready + 1;
-          if (ready == 2)
-              {
-                captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-                imageData = captureCanvas.toDataURL('image/png');
-                socket.emit('connect_ai', imageData);
-              }
         });
 
         // ICE candidate 보내기
@@ -180,6 +158,9 @@ let ready = 0;
             remoteVideo.srcObject = event.streams[0];
           }
           remoteVideo.srcObject = event.streams[0];
+          captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+          imageData = captureCanvas.toDataURL('image/png');
+          socket.emit('connect_ai', imageData);
         };
 
 

@@ -32,9 +32,12 @@ let ready = 0;
         imageData = captureCanvas.toDataURL('image/png');
 
         socket.on('connected_ai', () => {
-          captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-          imageData = captureCanvas.toDataURL('image/png');
-          socket.emit('connect_ai', imageData);
+          if (peerConnection.iceConnectionState === 'connected')
+          {
+            captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+            imageData = captureCanvas.toDataURL('image/png');
+            socket.emit('connect_ai', imageData);
+          }
         })
 
         socket.on('graph', graph => {

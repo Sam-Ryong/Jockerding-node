@@ -118,11 +118,13 @@ let ready = 0;
     
     
         // offer 보내기
-        await peerConnection.addStream(stream);
+        peerConnection.addStream(stream);
         peerConnection.createOffer()
           .then(offer => peerConnection.setLocalDescription(offer))
           .then(() => {
-            socket.emit('offer', peerConnection.localDescription, currentRoom);
+            setTimeout(() => {
+                socket.emit('offer', peerConnection.localDescription, currentRoom);
+              }, 1000); // 1000밀리초 = 1초
           });
         // offer 받기
         socket.on('offer', offer => {
@@ -130,13 +132,15 @@ let ready = 0;
           peerConnection.createAnswer()
             .then(answer => peerConnection.setLocalDescription(answer))
             .then(() => {
-                socket.emit('answer', peerConnection.localDescription, currentRoom);
+                setTimeout(() => {
+                    socket.emit('answer', peerConnection.localDescription, currentRoom);
+                  }, 1000);
             });
         });
 
         // answer 받기
-        socket.on('answer', async (answer) => {
-          await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+        socket.on('answer', (answer) => {
+          peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
         });
 
         // ICE candidate 받기
@@ -147,7 +151,9 @@ let ready = 0;
         // ICE candidate 보내기
         peerConnection.onicecandidate = (event) => {
           if (event.candidate) {
-            socket.emit('ice-candidate', event.candidate, currentRoom);
+            setTimeout(() => {
+                socket.emit('ice-candidate', event.candidate, currentRoom);
+              }, 1000);
           }
         };
 

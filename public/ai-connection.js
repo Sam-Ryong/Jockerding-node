@@ -132,11 +132,7 @@ let ready = 0;
         // ICE candidate 받기
         socket.on('ice-candidate', async (candidate) => {
           try {
-            await peerConnection.addIceCandidate(new RTCIceCandidate(candidate),()=>{},async (candidate)=>
-            {
-              await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-            } );
-            // await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+            await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
           } catch (error) {
             console.error('오류 발생:', error);
           }
@@ -175,6 +171,7 @@ let ready = 0;
           }
         };
         
+        peerConnection.addIceCandidate({candidate : ''});
         // captureAndUpload();
         
         

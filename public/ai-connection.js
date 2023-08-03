@@ -40,7 +40,8 @@ let ready = 0;
         })
 
         socket.on('graph', graph => {
-          document.getElementById("key3Value").innerText = `(${parseInt(graph["Anger"])}%)`+"-".repeat(parseInt(graph["Anger"])/2);
+            document.getElementById("key3Value").innerText = "■".repeat(parseInt(graph["Anger"])/2);
+            document.getElementById("key3").innerText = `Anger (${parseInt(graph["Anger"])}%)`;
           sad_ratio = sad_ratio + parseInt(graph["Sad"]);
           rage_ratio = rage_ratio + parseInt(graph["Anger"]);
           if (parseInt(graph["Anger"]) > 30)
@@ -83,7 +84,8 @@ let ready = 0;
         })
 
         socket.on('op_graph', op_graph => {
-          document.getElementById("op_key3Value").innerText = `(${parseInt(op_graph["Anger"])}%)`+"-".repeat(parseInt(op_graph["Anger"])/2);
+            document.getElementById("op_key3Value").innerText = "■".repeat(parseInt(op_graph["Anger"])/2);
+            document.getElementById("op_key3").innerText = `Anger (${parseInt(op_graph["Anger"])}%)`;
           sad_ratio = sad_ratio - parseInt(op_graph["Sad"]);
           rage_ratio = rage_ratio - parseInt(op_graph["Anger"]);
           if (sad_ratio > 0)
@@ -148,13 +150,19 @@ let ready = 0;
         // ICE candidate 받기
         socket.on('ice-candidate', async (candidate) => {
           await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+          captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+          imageData = captureCanvas.toDataURL('image/png');
+          socket.emit('connect_ai', imageData);
         });
 
         // ICE candidate 보내기
         peerConnection.onicecandidate = (event) => {
           if (event.candidate) {
-            setTimeout(() => {
-                socket.emit('ice-candidate', event.candidate, currentRoom);
+            setTimeout(async () => {
+                await socket.emit('ice-candidate', event.candidate, currentRoom);
+                captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+                imageData = captureCanvas.toDataURL('image/png');
+                socket.emit('connect_ai', imageData);
               }, 1000);
           }
         };

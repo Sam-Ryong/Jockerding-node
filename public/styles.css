@@ -34,13 +34,7 @@ body {
   margin: 0;
 }
 
-h1 {
-  font-family: "NeoDunggeunmoPro-Regular";
-  font-size: 50px;
-  /* font-weight: bold; */
-  text-align: center;
-  margin: 0;
-}
+
 
 a {
   padding-top: 10px;
@@ -65,6 +59,16 @@ form {
   padding: 0 50px;
   height: 100%;
   text-align: center;
+}
+
+span {
+  
+  padding-top: 50px;
+  position: relative;
+  overflow: hidden;
+  width: 300px;
+  max-width: 100%;
+  min-height: 700px;
 }
 
 @keyframes vibrate-1 {
@@ -154,21 +158,58 @@ form {
   box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.3);
 }
 
-.left-pane, .center-pane, .right-pane {
+.left-pane, .right-pane {
   /* display: flex;
   flex-direction: column; 
   justify-content: center; 
   align-items: center; 가로 방향에서 가운데로 정렬 */
-  padding-top: 50px;
-  background-color: #fff;
-  border-radius: 10px;
+  padding-top: 5px;
+  background-color: #000000cf;
+  border-radius: 5px;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   position: relative;
   overflow: hidden;
-  width: 600px;
+  width: 300px;
   max-width: 100%;
-  min-height: 700px;
+  min-height: 400px;
   
+}
+
+.center-pane {
+  background-color: rgb(234, 232, 232);
+  border-radius: 5px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  border-width : 1px;
+  border-color : rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  width: 300px;
+  max-width: 100%;
+  min-height: 400px;
+  margin : 0px 10px;
+}
+.ratio {
+  border :#333;
+  margin : 30px;
+  min-height : 100px;
+}
+.gamepage {
+  display: flex;
+  flex-direction: column; 
+  justify-content: center; /* 세로 방향에서 가운데로 정렬 */
+  align-items: center;
+  position: relative;
+  top: 50;
+  height: 100%;
+}
+.gamestart {
+  position: relative;
+  top: 0;
+  font-family: "NeoDunggeunmoPro-Regular";
+  font-size: 50px;
+  text-align: center;
+  margin-top: 0;
+  padding-top: 50px;
 }
 
 .container {
@@ -180,6 +221,11 @@ form {
   top: 50;
   height: 100%;
   transition: all 0.6s ease-in-out;
+}
+
+.center-title {
+  margin : 10px;
+  font-size : 20px;
 }
 
 .sign-in-container {
@@ -197,22 +243,29 @@ form {
 } */
 
 #table-div {
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 
 table {
-  border-collapse: collapse;
-  width: 100%;
+  width: 50%;
+  margin-left: 5px;
 }
 
 th {
-  width: 10px;
-  padding: 8px;
-  text-align: center;
+  border-collapse:collapse;
+  padding : 0px;
+  color : red;
+  border : none;
+  text-align: left;
+  font-weight: normal;
 }
 td {
-  padding: 8px;
-  text-align: center;
+  border-collapse:collapse;
+  padding: 0px;
+  border : none;
+  color : red;
+  text-align: left;
+  letter-spacing: -6px;
 }
 
 .video-info {
@@ -221,7 +274,8 @@ td {
 }
 
 #webcamStream, #remoteVideo {
-  height: 180px;
+  height: 300px;
+  width : 300px;
   border: 1px solid #ccc;
   object-fit: cover;
 }
@@ -242,3 +296,7 @@ td {
 }
 
 /* Add more styles here as needed */
+#status {
+  font-size : 15px;
+  color : white;
+}

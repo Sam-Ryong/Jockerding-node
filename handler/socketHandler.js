@@ -39,9 +39,9 @@ function configureSocket(server) {
       
       
         // 클라이언트가 offer를 보내면 다른 사용자에게 전달
-        socket.on('connect_ai', async (room, imageData) => {
+        socket.on('connect_ai', async (imageData) => {
           base64Data = imageData.replace(/^data:image\/png;base64,/, '');
-          console.log(base64Data);
+          
           try {
             const response = await axios.post('http://localhost:5000/predict', {
               base64Data: base64Data,

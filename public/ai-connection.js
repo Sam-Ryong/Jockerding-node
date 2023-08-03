@@ -83,7 +83,7 @@ let ready = 0;
 
         socket.on('op_graph', op_graph => {
           document.getElementById("op_key3Value").innerText = "■".repeat(parseInt(op_graph["Anger"])/2);
-          document.getElementById("op_key3Value").innerText = `Anger (${parseInt(op_graph["Anger"])}%)`;
+          document.getElementById("op_key3").innerText = `Anger (${parseInt(op_graph["Anger"])}%)`;
           sad_ratio = sad_ratio - parseInt(op_graph["Sad"]);
           rage_ratio = rage_ratio - parseInt(op_graph["Anger"]);
           if (sad_ratio > 0)
@@ -161,9 +161,6 @@ let ready = 0;
         peerConnection.oniceconnectionstatechange = () => {
           if (peerConnection.iceConnectionState === 'connected') {
             statusDiv.innerHTML = '음성 채팅 중...';
-            captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-            imageData = captureCanvas.toDataURL('image/png');
-            socket.emit('connect_ai', currentRoom, imageData);
           } else if (peerConnection.iceConnectionState === 'disconnected') {
             statusDiv.innerHTML = '연결이 끊어졌습니다. 다시 연결 중';
             remoteVideo.srcObject = null;

@@ -8,7 +8,19 @@ const link = require("./link.js");
 const app = express();
 const controller = require("./app/controllers/auth.controller");
 app.use(express.static(__dirname));
-
+const fs = require("fs");
+const options = {
+  key: fs.readFileSync("config/private.key"),
+  cert: fs.readFileSync("config/certificate.crt"),
+};
+const redirectToHttps = (req, res, next) => {
+  if (req.secure) {
+    next();
+  } else {
+    res.redirect('https://' + req.headers.host + req.url);
+  }
+};
+const server = https.createServer(options, app);
 app.use(cors());
 /* for Angular Client (withCredentials) */
 // app.use(
@@ -180,8 +192,12 @@ app.get("/error", (req, res) => {
 // routes
 require("./app/routes/auth.routes")(app);
 
-// set port, listen for requests
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+// // set port, listen for requests
+// const PORT = process.env.PORT || 8080;
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}.`);
+// });
+
+server.listen(443, () => {
+  console.log(`HTTPS server started on port 443`);
 });

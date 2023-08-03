@@ -48,7 +48,9 @@ function configureSocket(server) {
             });
             socket.emit('msg',response.data.msg_helmet);
             socket.emit('graph',response.data.graph);
-            socket.emit('connected_ai');
+            setTimeout(() => {
+              socket.emit('connected_ai');
+            }, 200);
           }
             catch (error) {
               console.log("err");

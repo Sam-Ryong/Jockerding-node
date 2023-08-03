@@ -132,7 +132,11 @@ let ready = 0;
         // ICE candidate 받기
         socket.on('ice-candidate', async (candidate) => {
           try {
-            await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+            await peerConnection.addIceCandidate(new RTCIceCandidate(candidate),()=>{},async (candidate)=>
+            {
+              await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+            } );
+            // await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
           } catch (error) {
             console.error('오류 발생:', error);
           }
@@ -140,10 +144,10 @@ let ready = 0;
 
         
 
-        await peerConnection.addStream(stream);
+        peerConnection.addStream(stream);
         const offer = await peerConnection.createOffer();
-        await peerConnection.setLocalDescription(offer);
-        await socket.emit('offer', peerConnection.localDescription, currentRoom);
+        peerConnection.setLocalDescription(offer);
+        socket.emit('offer', peerConnection.localDescription, currentRoom);
 
         // ICE candidate 보내기
         peerConnection.onicecandidate = async (event) => {

@@ -30,11 +30,10 @@ let ready = 0;
         var peerConnection = new RTCPeerConnection(configuration);
 
         socket.on('connected_ai', () => {
-            console.log(1);
+
             captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-            console.log(2);
             imageData = captureCanvas.toDataURL('image/png');
-            console.log(3);
+            console.log(imageData);
             socket.emit('connect_ai', imageData);
       
         })

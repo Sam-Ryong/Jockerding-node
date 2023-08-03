@@ -122,9 +122,10 @@ let ready = 0;
         peerConnection.createOffer()
           .then(offer => peerConnection.setLocalDescription(offer))
           .then(() => {
-            setTimeout(() => {
-                socket.emit('offer', peerConnection.localDescription, currentRoom);
-              }, 1000); // 1000밀리초 = 1초
+            // setTimeout(() => {
+            //     socket.emit('offer', peerConnection.localDescription, currentRoom);
+            //   }, 1000); // 1000밀리초 = 1초
+            socket.emit('offer', peerConnection.localDescription, currentRoom);
           });
         // offer 받기
         socket.on('offer', offer => {
@@ -132,9 +133,10 @@ let ready = 0;
           peerConnection.createAnswer()
             .then(answer => peerConnection.setLocalDescription(answer))
             .then(() => {
-                setTimeout(() => {
-                    socket.emit('answer', peerConnection.localDescription, currentRoom);
-                  }, 1000);
+                // setTimeout(() => {
+                //     socket.emit('answer', peerConnection.localDescription, currentRoom);
+                //   }, 1000);
+                socket.emit('answer', peerConnection.localDescription, currentRoom);
             });
         });
 
@@ -153,7 +155,7 @@ let ready = 0;
           if (event.candidate) {
             setTimeout(() => {
                 socket.emit('ice-candidate', event.candidate, currentRoom);
-              }, 1000);
+              }, 2000);
           }
         };
 

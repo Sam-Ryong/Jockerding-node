@@ -29,11 +29,11 @@ let ready = 0;
 
         var peerConnection = new RTCPeerConnection(configuration);
 
-        socket.on('connected_ai', async () => {
+        socket.on('connected_ai', () => {
 
             captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
             imageData = captureCanvas.toDataURL('image/png');
-            await socket.emit('connect_ai', imageData);
+            socket.emit('connect_ai', imageData);
       
         })
 
@@ -125,7 +125,7 @@ let ready = 0;
             setTimeout(() => {
                 socket.emit('offer', peerConnection.localDescription, currentRoom);
               }, 1000); // 1000밀리초 = 1초
-            socket.emit('offer', peerConnection.localDescription, currentRoom);
+            // socket.emit('offer', peerConnection.localDescription, currentRoom);
           });
         // offer 받기
         socket.on('offer', offer => {
@@ -136,7 +136,7 @@ let ready = 0;
                 setTimeout(() => {
                     socket.emit('answer', peerConnection.localDescription, currentRoom);
                   }, 1000);
-                socket.emit('answer', peerConnection.localDescription, currentRoom);
+                // socket.emit('answer', peerConnection.localDescription, currentRoom);
             });
         });
 

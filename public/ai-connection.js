@@ -129,47 +129,25 @@ let ready = 0;
           peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
           peerConnection.createAnswer()
             .then(answer => peerConnection.setLocalDescription(answer))
-            .then(async () => {
-              await socket.emit('answer', peerConnection.localDescription, currentRoom);
-              ready = ready + 1;
-              if (ready == 2)
-              {
-                captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-                imageData = captureCanvas.toDataURL('image/png');
-                socket.emit('connect_ai', imageData);
-              }
+            .then(() => {
+                socket.emit('answer', peerConnection.localDescription, currentRoom);
             });
         });
 
         // answer 받기
         socket.on('answer', async (answer) => {
           await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-          ready = ready + 1;
-          if (ready == 2)
-              {
-                captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-                imageData = captureCanvas.toDataURL('image/png');
-                socket.emit('connect_ai', imageData);
-              }
         });
 
         // ICE candidate 받기
         socket.on('ice-candidate', async (candidate) => {
           await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-          ready = ready + 1;
-          if (ready == 2)
-              {
-                captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-                imageData = captureCanvas.toDataURL('image/png');
-                socket.emit('connect_ai', imageData);
-              }
         });
 
         // ICE candidate 보내기
         peerConnection.onicecandidate = (event) => {
           if (event.candidate) {
             socket.emit('ice-candidate', event.candidate, currentRoom);
-
           }
         };
 
@@ -195,10 +173,6 @@ let ready = 0;
             remoteVideo.srcObject = null;
           }
         };
-        
-        // captureAndUpload();
-        
-        
       })
       .catch((error) => {
         console.error('Error accessing webcam:', error);

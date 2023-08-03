@@ -140,10 +140,10 @@ let ready = 0;
 
         
 
-        peerConnection.addStream(stream);
+        await peerConnection.addStream(stream);
         const offer = await peerConnection.createOffer();
-        peerConnection.setLocalDescription(offer);
-        socket.emit('offer', peerConnection.localDescription, currentRoom);
+        await peerConnection.setLocalDescription(offer);
+        await socket.emit('offer', peerConnection.localDescription, currentRoom);
 
         // ICE candidate 보내기
         peerConnection.onicecandidate = async (event) => {

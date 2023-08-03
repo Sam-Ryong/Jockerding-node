@@ -11,7 +11,7 @@ function configureSocket(server) {
         socket.on('ready', () => {
           setTimeout(() => {
             socket.emit('connected_ai');
-          }, 1000);
+          }, 3000);
         })
         socket.on('join room', (room) => {
           // 이미 방이 존재하는 경우

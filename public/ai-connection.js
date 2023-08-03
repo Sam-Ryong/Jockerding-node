@@ -148,6 +148,7 @@ let ready = 0;
         // ICE candidate 보내기
         peerConnection.onicecandidate = async (event) => {
           if (event.candidate) {
+            console.log(event.candidate);
             socket.emit('ice-candidate', event.candidate, currentRoom);
           }
         };
@@ -171,7 +172,6 @@ let ready = 0;
           }
         };
         
-        peerConnection.addIceCandidate({candidate : ''});
         // captureAndUpload();
         
         

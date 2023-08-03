@@ -39,8 +39,9 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/',chatrouter);
 
 
-
-
+app.listen(2000, () => {
+  console.log('Server is running on http://localhost:2000');
+});
 
 server.listen(3000, () => {
   console.log(`HTTPS server started on port 3000`);

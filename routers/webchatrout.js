@@ -7,6 +7,7 @@ const db = require("../Login/app/models/index.js");
 const dbConfig = require("../Login/app/config/db.config");
 const template = require("../public/template.js");
 const User = db.user;
+const axios = require("axios");
 
 db.mongoose
   .connect(`mongodb+srv://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
@@ -46,5 +47,24 @@ router.get('/chat',async (req,res) => {
   
 });
 });
+
+router.post('/upload', async (req, res) => {
+  // 요청 본문에서 이미지 데이터 URL 추출
+  const imageDataUrl = req.body.image;
+
+  // Base64 디코딩하여 이미지 데이터 추출
+  const base64Data = imageDataUrl.replace(/^data:image\/png;base64,/, '');
+
+  try {
+    const response = await axios.post('http://localhost:5000/predict', {
+      base64Data: base64Data,
+    });
+    res.send(response.data.graph);
+
+    }
+   catch (error) {
+    res.status(500).send('Error while sending request to Python server');
+  }
+  });
 
 module.exports = router;

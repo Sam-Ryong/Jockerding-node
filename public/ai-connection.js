@@ -117,24 +117,16 @@ let ready = 0;
 
         
         // offer 받기
-        socket.on('offer', async offer => {
-          try {
-            await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-            const answer = await peerConnection.createAnswer();
-            await peerConnection.setLocalDescription(answer);
-            socket.emit('answer', peerConnection.localDescription, currentRoom);
-          } catch (error) {
-            console.error('오류 발생:', error);
-          }
+        socket.on('offer', async (offer) => {
+          peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+          const answer = await peerConnection.createAnswer();
+          peerConnection.setLocalDescription(answer);
+          socket.emit('answer', peerConnection.localDescription, currentRoom);
         });
         
         // answer 받기
         socket.on('answer', async (answer) => {
-          try {
             await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-          } catch (error) {
-            console.error('오류 발생:', error);
-          }
         });
 
         // ICE candidate 받기
@@ -149,11 +141,10 @@ let ready = 0;
         
 
         peerConnection.addStream(stream);
-        peerConnection.createOffer()
-        .then(offer => peerConnection.setLocalDescription(offer))
-        .then(() => {
-          socket.emit('offer', peerConnection.localDescription, currentRoom);
-        });
+        const offer = await peerConnection.createOffer();
+        peerConnection.setLocalDescription(offer);
+        socket.emit('offer', peerConnection.localDescription, currentRoom);
+
         // ICE candidate 보내기
         peerConnection.onicecandidate = async (event) => {
           if (event.candidate) {

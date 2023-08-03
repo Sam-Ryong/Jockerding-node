@@ -258,6 +258,7 @@ th {
   border : none;
   text-align: left;
   font-weight: normal;
+  font-size: 80%;
 }
 td {
   border-collapse:collapse;

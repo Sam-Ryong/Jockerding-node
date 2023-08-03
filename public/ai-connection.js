@@ -19,6 +19,7 @@ let face_rage = 0;
 let rage_ratio = 0;
 let sad_ratio = 0;
 let ready = 0;
+let can = {};
 
     // 웹캠 스트림 표시를 위한 미디어 장치 요청
     navigator.mediaDevices.getUserMedia({video: true, audio: true})
@@ -128,12 +129,7 @@ let ready = 0;
         socket.on('answer', async (answer) => {
             await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
             console.log("thisisfirst");
-            peerConnection.onicecandidate = async (event) => {
-              if (event.candidate) {
-                console.log("thisissecond");
-                socket.emit('ice-candidate', event.candidate, currentRoom);
-              }
-            };
+            socket.emit('ice-candidate', can, currentRoom);
         });
 
         // ICE candidate 받기
@@ -153,7 +149,12 @@ let ready = 0;
         socket.emit('offer', peerConnection.localDescription, currentRoom);
 
         // ICE candidate 보내기
-        
+        peerConnection.onicecandidate = async (event) => {
+          if (event.candidate) {
+            can = event.candidate;
+            
+          }
+        };
 
         // 원격 비디오 스트림 받기
         peerConnection.ontrack = async (event) => {

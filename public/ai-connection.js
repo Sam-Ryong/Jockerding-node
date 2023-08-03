@@ -28,8 +28,6 @@ let ready = 0;
         socket.emit('join room', roomnum.innerText);
 
         var peerConnection = new RTCPeerConnection(configuration);
-        captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-        imageData = captureCanvas.toDataURL('image/png');
 
         socket.on('connected_ai', () => {
       
@@ -150,6 +148,8 @@ let ready = 0;
         // ICE candidate 받기
         socket.on('ice-candidate', async (candidate) => {
           await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+          captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+          imageData = captureCanvas.toDataURL('image/png');
           socket.emit('connect_ai', imageData);
         });
 

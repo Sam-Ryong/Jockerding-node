@@ -6,6 +6,7 @@ const dbConfig = require("./app/config/db.config");
 const mypage = require("./mypage.js");
 const link = require("./link.js");
 const app = express();
+const https = require("https");
 const controller = require("./app/controllers/auth.controller");
 app.use(express.static(__dirname));
 const fs = require("fs");

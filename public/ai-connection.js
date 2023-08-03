@@ -75,10 +75,10 @@ let ready = 0;
         socket.on('msg', msg => {
           contentDiv.innerHTML = msg;
           socket.emit('msg',msg, currentRoom);
-        })
+        });
         socket.on('op_msg', op_msg => {
           op_contentDiv.innerHTML = op_msg;
-        })
+        });
 
         socket.on('op_graph', op_graph => {
           document.getElementById("op_key3Value").innerText = "■".repeat(parseInt(op_graph["Anger"])/2);
@@ -117,8 +117,8 @@ let ready = 0;
 
         
         // offer 받기
-        socket.on('offer', offer => {
-          peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
+        socket.on('offer', async offer => {
+          await peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
           peerConnection.createAnswer()
             .then(answer => peerConnection.setLocalDescription(answer))
             .then(async () => {

@@ -56,7 +56,6 @@ module.exports = (code) => { return `<!DOCTYPE html>
         </div>
     </div>
     <!-- script.js 파일 로드 -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"></script>
     <script src="ai-connection.js"></script>
 </body>

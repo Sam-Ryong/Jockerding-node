@@ -6,20 +6,9 @@ const dbConfig = require("./app/config/db.config");
 const mypage = require("./mypage.js");
 const link = require("./link.js");
 const app = express();
-const https = require("https");
-const fs = require("fs");
-const options = {
-  key: fs.readFileSync("config/private.key"),
-  cert: fs.readFileSync("config/certificate.crt"),
-};
-const redirectToHttps = (req, res, next) => {
-  if (req.secure) {
-    next();
-  } else {
-    res.redirect('https://' + req.headers.host + req.url);
-  }
-};
-const server = https.createServer(options, app);
+const controller = require("./app/controllers/auth.controller");
+app.use(express.static(__dirname));
+
 app.use(cors());
 /* for Angular Client (withCredentials) */
 // app.use(
@@ -176,21 +165,23 @@ app.use("/api/auth/link", async (req, res) => {
   }
 });
 
-app.get("/signup", async (req, res) => {
-  await res.sendFile(__dirname + "/register.html");
+app.get("/signup", (req, res) => {
+  res.sendFile(__dirname + "/register.html");
 });
 
 app.get("/signin", (req, res) => {
   res.sendFile(__dirname + "/login.html");
 });
 
+app.get("/error", (req, res) => {
+  res.sendFile(__dirname + "/error.html");
+});
+
 // routes
 require("./app/routes/auth.routes")(app);
 
-// // set port, listen for requests
-// app.listen(80, () => {
-//   console.log(`Server is running on port ${80}.`);
-// });
-server.listen(443, () => {
-  console.log(`HTTPS server started on port 443`);
+// set port, listen for requests
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
 });

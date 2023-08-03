@@ -6,8 +6,9 @@ var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
 exports.signup = (req, res) => {
+  // 10자 길이의 랜덤 문자열 생성
   const randomString = randomstring.generate(5);
-  console.log(randomString);
+  console.log(randomString); // 예시 출력: "n2Lg8Gd1iW"
 
   const user = new User({
     username: req.body.username,
@@ -22,11 +23,10 @@ exports.signup = (req, res) => {
   user.save((err, user) => {
     if (err) {
       // res.status(500).send({ message: err });
-      res.send(`<script>alert("res.status(500) err);window.location.href='/signin';
-      </script>`);
+      res.send(`<script>alert("res.status(500) err);</script>`);
       return;
     } else {
-      res.send(`<script>alert('만나서 반가워용 X-D 이제 로그인하러 고고');
+      res.send(`<script>alert('회원가입 성공');
       window.location.href='/signin';
       </script>`);
     }
@@ -38,22 +38,18 @@ exports.signin = (req, res) => {
     email: req.body.email,
   }).exec((err, user) => {
     if (err) {
-      return res.redirect("/error");
+      res.status(500).send({ message: err });
+      return;
     }
 
     if (!user) {
-      // return res.redirect("/error");
-      return res.send(`<script>alert('이메일 땡! 다시 츄라이츄라이 ヽ(°〇°)ﾉ');
-      window.location.href='/signin';
-      </script>`);
+      return res.status(404).send({ message: "User Not found." });
     }
 
     var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
 
     if (!passwordIsValid) {
-      return res.send(`<script>alert('비밀번호 땡! 다시 츄라이츄라이 ヽ(°〇°)ﾉ');
-      window.location.href='/signin';
-      </script>`);
+      return res.status(401).send({ message: "Invalid Password!" });
     }
 
     //첫번째 데이터로 페이로드 인자를 입력한다. 여기서는 userid를 저장했다
@@ -73,11 +69,7 @@ exports.signin = (req, res) => {
 exports.signout = async (req, res) => {
   try {
     req.session = null;
-    // return res.status(200).send({ message: "You've been signed out!" });
-    // return res.redirect("/signin");
-    return res.send(`<script>alert('기분은 좀 풀렸길 <( ^.^ )>');
-      window.location.href='/signin';
-      </script>`);
+    return res.status(200).send({ message: "You've been signed out!" });
   } catch (err) {
     this.next(err);
   }

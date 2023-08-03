@@ -7,13 +7,13 @@ checkDuplicateEmail = (req, res, next) => {
     email: req.body.email,
   }).exec((err, user) => {
     if (err) {
-      return res.redirect("/error");
+      res.status(500).send({ message: err });
+      return;
     }
 
     if (user) {
-      return res.send(`<script>alert('본적 있는 이메일인디..?');
-      window.location.href='/signin';
-      </script>`);
+      res.status(400).send({ message: "Failed! Email is already in use!" });
+      return;
     }
 
     next();

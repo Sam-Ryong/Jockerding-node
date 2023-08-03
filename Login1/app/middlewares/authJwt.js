@@ -6,9 +6,9 @@ const path = require("path");
 
 verifyToken = async (req, res, next) => {
   let token = await req.session.token;
-
+  
   if (!token) {
-    // return res.sendFile(path.join(__dirname + "../../..", "home.html"));
+    // return res.sendFile(path.join(__dirname + "../..", "home.html"));
     // return res.redirect("/signin");
     // res.send(
     //   `<script>alert('No token provided');
@@ -18,7 +18,9 @@ verifyToken = async (req, res, next) => {
   } else {
     jwt.verify(token, config.secret, (err, decoded) => {
       if (err) {
-        next();
+        return res.status(401).send({
+          message: "Unauthorized!",
+        });
       }
       req.userId = decoded.id;
       next();

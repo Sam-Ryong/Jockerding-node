@@ -33,7 +33,6 @@ let ready = 0;
 
             captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
             imageData = captureCanvas.toDataURL('image/png');
-            console.log(imageData);
             socket.emit('connect_ai', imageData);
       
         })

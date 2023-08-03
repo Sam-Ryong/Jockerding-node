@@ -10,8 +10,7 @@ const roomnum = document.getElementById('roomnum');
 const configuration = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    {url: 'turn:numb.viagenie.ca', credential: 'muazkh', username: 'webrtc@live.com'}
+    { urls: 'stun:stun1.l.google.com:19302' }
   ]
 };
 const socket = io();

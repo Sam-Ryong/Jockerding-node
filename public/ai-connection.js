@@ -29,17 +29,17 @@ let ready = 0;
 
         var peerConnection = new RTCPeerConnection(configuration);
 
-        socket.on('connected_ai', () => {
+        socket.on('connected_ai', async () => {
 
             captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
             imageData = captureCanvas.toDataURL('image/png');
-            socket.emit('connect_ai', imageData);
+            await socket.emit('connect_ai', imageData);
       
         })
 
         socket.on('graph', graph => {
             document.getElementById("key3Value").innerText = "■".repeat(parseInt(graph["Anger"])/2);
-            document.getElementById("key3").innerText = `Anger (${parseInt(graph["Anger"])}%)`;
+            document.getElementById("key3").innerText = `Anger(${parseInt(graph["Anger"])}%)`;
           sad_ratio = sad_ratio + parseInt(graph["Sad"]);
           rage_ratio = rage_ratio + parseInt(graph["Anger"]);
           if (parseInt(graph["Anger"]) > 30)
@@ -83,7 +83,7 @@ let ready = 0;
 
         socket.on('op_graph', op_graph => {
             document.getElementById("op_key3Value").innerText = "■".repeat(parseInt(op_graph["Anger"])/2);
-            document.getElementById("op_key3").innerText = `Anger (${parseInt(op_graph["Anger"])}%)`;
+            document.getElementById("op_key3").innerText = `Anger(${parseInt(op_graph["Anger"])}%)`;
           sad_ratio = sad_ratio - parseInt(op_graph["Sad"]);
           rage_ratio = rage_ratio - parseInt(op_graph["Anger"]);
           if (sad_ratio > 0)

@@ -41,9 +41,9 @@ function configureSocket(server) {
             const response = await axios.post('http://localhost:5000/predict', {
               base64Data: base64Data,
             });
-            socket.emit('msg',response.data.msg_helmet);
-            socket.emit('graph',response.data.graph);
-            socket.emit('connected_ai');
+            await socket.emit('msg',response.data.msg_helmet);
+            await socket.emit('graph',response.data.graph);
+            await socket.emit('connected_ai');
 
           }
             catch (error) {

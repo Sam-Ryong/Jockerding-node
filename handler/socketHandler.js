@@ -8,6 +8,11 @@ function configureSocket(server) {
     io.on('connection', socket => {
         console.log('새로운 사용자가 연결되었습니다.');
       
+        socket.on('ready', () => {
+          setTimeout(() => {
+            socket.emit('connected_ai');
+          }, 1000);
+        })
         socket.on('join room', (room) => {
           // 이미 방이 존재하는 경우
           if (rooms[room] && rooms[room].length === 2) {

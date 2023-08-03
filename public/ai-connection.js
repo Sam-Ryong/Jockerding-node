@@ -125,6 +125,12 @@ let ready = 0;
               await socket.emit('answer', peerConnection.localDescription, currentRoom);
             });
         });
+        peerConnection.addStream(stream);
+        peerConnection.createOffer()
+        .then(offer => peerConnection.setLocalDescription(offer))
+        .then(() => {
+          socket.emit('offer', peerConnection.localDescription, currentRoom);
+        });
 
         // answer 받기
         socket.on('answer', async (answer) => {
@@ -144,18 +150,11 @@ let ready = 0;
           }
         };
 
-        peerConnection.addStream(stream);
-        peerConnection.createOffer()
-        .then(offer => peerConnection.setLocalDescription(offer))
-        .then(() => {
-          socket.emit('offer', peerConnection.localDescription, currentRoom);
-        });
         // 원격 비디오 스트림 받기
         peerConnection.ontrack = async (event) => {
           const track = event.track;
           remoteVideo.srcObject = event.streams[0];
         };
-
 
         // 연결 상태 이벤트 처리
         peerConnection.oniceconnectionstatechange = () => {

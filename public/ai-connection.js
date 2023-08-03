@@ -73,13 +73,13 @@ let ready = 0;
           socket.emit('graph', graph, currentRoom);
         })
 
-        socket.on('msg', msg => {
-          contentDiv.innerHTML = msg;
-          socket.emit('msg',msg, currentRoom);
-        })
-        socket.on('op_msg', op_msg => {
-          op_contentDiv.innerHTML = op_msg;
-        })
+        // socket.on('msg', msg => {
+        //   contentDiv.innerHTML = msg;
+        //   socket.emit('msg',msg, currentRoom);
+        // })
+        // socket.on('op_msg', op_msg => {
+        //   op_contentDiv.innerHTML = op_msg;
+        // })
 
         socket.on('op_graph', op_graph => {
             document.getElementById("op_key3Value").innerText = "■".repeat(parseInt(op_graph["Anger"])/2);

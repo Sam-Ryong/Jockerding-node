@@ -52,9 +52,9 @@ function configureSocket(server) {
           
         });
       
-        socket.on('msg', (msg, room) => {
-          socket.to(room).emit('op_msg', msg); // 모든 클라이언트에게 메시지 전송
-        });
+        // socket.on('msg', (msg, room) => {
+        //   socket.to(room).emit('op_msg', msg); // 모든 클라이언트에게 메시지 전송
+        // });
         socket.on('graph', (graph, room) => {
           socket.to(room).emit('op_graph', graph); // 모든 클라이언트에게 메시지 전송
         });

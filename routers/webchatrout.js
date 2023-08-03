@@ -6,10 +6,8 @@ const cookieSession = require("cookie-session");
 const db = require("../Login/app/models/index.js");
 const dbConfig = require("../Login/app/config/db.config");
 const template = require("../public/template.js");
-const authJwt = require("../Login/app/middlewares/authJwt.js");
 const User = db.user;
 
-router.use(authJwt.verifyToken);
 db.mongoose
   .connect(`mongodb+srv://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
     useNewUrlParser: true,
@@ -33,11 +31,20 @@ router.use(
 );
 
 router.get('/chat',async (req,res) => {
-
-  const user = await User.findById(req.userId);
-  const code = user.code;
-  res.send(template(code)); 
-
+  jwt.verify(req.session.token, "bezkoder-secret-key", async (err, decoded) => {
+      if (err) {
+          return res.status(401).send({
+              message: "Unauthorized!",
+          });
+      }
+      else{
+          req.userId = decoded.id;
+          const user = await User.findById(req.userId);
+          const code = user.code;
+          return res.send(template(code));
+      }
+  
+});
 });
 
 module.exports = router;

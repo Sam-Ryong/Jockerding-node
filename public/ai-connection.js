@@ -118,23 +118,32 @@ let ready = 0;
         
         // offer 받기
         socket.on('offer', async offer => {
-          await peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
-          peerConnection.createAnswer()
-            .then(answer => peerConnection.setLocalDescription(answer))
-            .then(async () => {
-              await socket.emit('answer', peerConnection.localDescription, currentRoom);
-            });
+          try {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+            socket.emit('answer', peerConnection.localDescription, currentRoom);
+          } catch (error) {
+            console.error('오류 발생:', error);
+          }
         });
         
         // answer 받기
         socket.on('answer', async (answer) => {
-          await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-
+          try {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+          } catch (error) {
+            console.error('오류 발생:', error);
+          }
         });
 
         // ICE candidate 받기
         socket.on('ice-candidate', async (candidate) => {
-          await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+          try {
+            await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+          } catch (error) {
+            console.error('오류 발생:', error);
+          }
         });
 
         

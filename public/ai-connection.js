@@ -138,12 +138,7 @@ let ready = 0;
           await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
         });
 
-        // ICE candidate 보내기
-        peerConnection.onicecandidate = async (event) => {
-          if (event.candidate) {
-            socket.emit('ice-candidate', event.candidate, currentRoom);
-          }
-        };
+        
 
         peerConnection.addStream(stream);
         peerConnection.createOffer()
@@ -151,6 +146,12 @@ let ready = 0;
         .then(() => {
           socket.emit('offer', peerConnection.localDescription, currentRoom);
         });
+        // ICE candidate 보내기
+        peerConnection.onicecandidate = async (event) => {
+          if (event.candidate) {
+            socket.emit('ice-candidate', event.candidate, currentRoom);
+          }
+        };
 
         // 원격 비디오 스트림 받기
         peerConnection.ontrack = async (event) => {

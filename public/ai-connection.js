@@ -116,12 +116,7 @@ let ready = 0;
           alert('상대방이 종료했습니다.');
         });
 
-        peerConnection.addStream(stream);
-        peerConnection.createOffer()
-        .then(offer => peerConnection.setLocalDescription(offer))
-        .then(() => {
-          socket.emit('offer', peerConnection.localDescription, currentRoom);
-        });
+        
         // offer 받기
         socket.on('offer', offer => {
           peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
@@ -146,9 +141,16 @@ let ready = 0;
         // ICE candidate 보내기
         peerConnection.onicecandidate = async (event) => {
           if (event.candidate) {
-            await socket.emit('ice-candidate', event.candidate, currentRoom);
+            socket.emit('ice-candidate', event.candidate, currentRoom);
           }
         };
+
+        peerConnection.addStream(stream);
+        peerConnection.createOffer()
+        .then(offer => peerConnection.setLocalDescription(offer))
+        .then(() => {
+          socket.emit('offer', peerConnection.localDescription, currentRoom);
+        });
 
         // 원격 비디오 스트림 받기
         peerConnection.ontrack = async (event) => {

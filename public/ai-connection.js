@@ -128,8 +128,6 @@ let can = false;
         // answer 받기
         socket.on('answer', async (answer) => {
             await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-            console.log("thisisfirst");
-            can = true;
         });
 
         // ICE candidate 받기
@@ -150,7 +148,7 @@ let can = false;
 
         // ICE candidate 보내기
         peerConnection.onicecandidate = async (event) => {
-          if (event.candidate && can) {
+          if (event.candidate) {
             socket.emit('ICE-candiate',event.candidate,currentRoom);
           }
         };

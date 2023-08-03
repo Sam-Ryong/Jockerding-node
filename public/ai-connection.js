@@ -115,7 +115,13 @@ let ready = 0;
         socket.on('user left', (userId) => {
           alert('상대방이 종료했습니다.');
         });
-    
+        
+        peerConnection.addStream(stream);
+        peerConnection.createOffer()
+        .then(offer => peerConnection.setLocalDescription(offer))
+        .then(() => {
+          socket.emit('offer', peerConnection.localDescription, currentRoom);
+        });
         // offer 받기
         socket.on('offer', offer => {
           peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
@@ -125,13 +131,7 @@ let ready = 0;
               await socket.emit('answer', peerConnection.localDescription, currentRoom);
             });
         });
-        peerConnection.addStream(stream);
-        peerConnection.createOffer()
-        .then(offer => peerConnection.setLocalDescription(offer))
-        .then(() => {
-          socket.emit('offer', peerConnection.localDescription, currentRoom);
-        });
-
+        
         // answer 받기
         socket.on('answer', async (answer) => {
           await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));

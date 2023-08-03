@@ -10,8 +10,7 @@ const roomnum = document.getElementById('roomnum');
 const configuration = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    {url: 'turn:numb.viagenie.ca', credential: 'muazkh', username: 'webrtc@live.com'}
+    { urls: 'stun:stun1.l.google.com:19302' }
   ]
 };
 const socket = io();
@@ -20,6 +19,7 @@ let face_rage = 0;
 let rage_ratio = 0;
 let sad_ratio = 0;
 let ready = 0;
+let can = false;
 
     // 웹캠 스트림 표시를 위한 미디어 장치 요청
     navigator.mediaDevices.getUserMedia({video: true, audio: true})
@@ -28,19 +28,18 @@ let ready = 0;
         socket.emit('join room', roomnum.innerText);
 
         var peerConnection = new RTCPeerConnection(configuration);
-        captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-        imageData = captureCanvas.toDataURL('image/png');
 
         socket.on('connected_ai', () => {
       
             captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
             imageData = captureCanvas.toDataURL('image/png');
-            socket.emit('connect_ai', imageData);
+            socket.emit('connect_ai', currentRoom, imageData);
       
         })
 
         socket.on('graph', graph => {
-          document.getElementById("key3Value").innerText = `(${parseInt(graph["Anger"])}%)`+"-".repeat(parseInt(graph["Anger"])/2);
+          document.getElementById("key3Value").innerText = "■".repeat(parseInt(graph["Anger"])/2);
+          document.getElementById("key3").innerText = `Anger (${parseInt(graph["Anger"])}%)`;
           sad_ratio = sad_ratio + parseInt(graph["Sad"]);
           rage_ratio = rage_ratio + parseInt(graph["Anger"]);
           if (parseInt(graph["Anger"]) > 30)
@@ -77,13 +76,14 @@ let ready = 0;
         socket.on('msg', msg => {
           contentDiv.innerHTML = msg;
           socket.emit('msg',msg, currentRoom);
-        })
+        });
         socket.on('op_msg', op_msg => {
           op_contentDiv.innerHTML = op_msg;
-        })
+        });
 
         socket.on('op_graph', op_graph => {
-          document.getElementById("op_key3Value").innerText = `(${parseInt(op_graph["Anger"])}%)`+"-".repeat(parseInt(op_graph["Anger"])/2);
+          document.getElementById("op_key3Value").innerText = "■".repeat(parseInt(op_graph["Anger"])/2);
+          document.getElementById("op_key3").innerText = `Anger (${parseInt(op_graph["Anger"])}%)`;
           sad_ratio = sad_ratio - parseInt(op_graph["Sad"]);
           rage_ratio = rage_ratio - parseInt(op_graph["Anger"]);
           if (sad_ratio > 0)
@@ -109,79 +109,55 @@ let ready = 0;
         socket.on('room full', () => {
           alert('방이 가득 찼습니다. 다른 방에 접속해주세요.');
         });
-        socket.on('user joined', (userId) => {
+        socket.on('user joined', async (userId) => {
           alert('상대방이 접속했습니다.');
         });
         socket.on('user left', (userId) => {
           alert('상대방이 종료했습니다.');
         });
-    
-    
-        // offer 보내기
-        await peerConnection.addStream(stream);
-        peerConnection.createOffer()
-          .then(offer => peerConnection.setLocalDescription(offer))
-          .then(() => {
-            socket.emit('offer', peerConnection.localDescription, currentRoom);
-          });
-        // offer 받기
-        socket.on('offer', offer => {
-          peerConnection.setRemoteDescription(new RTCSessionDescription(offer))
-          peerConnection.createAnswer()
-            .then(answer => peerConnection.setLocalDescription(answer))
-            .then(async () => {
-              await socket.emit('answer', peerConnection.localDescription, currentRoom);
-              ready = ready + 1;
-              if (ready == 2)
-              {
-                captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-                imageData = captureCanvas.toDataURL('image/png');
-                socket.emit('connect_ai', imageData);
-              }
-            });
-        });
 
+        
+        // offer 받기
+        socket.on('offer', async (offer) => {
+          peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+          const answer = await peerConnection.createAnswer();
+          peerConnection.setLocalDescription(answer);
+          socket.emit('answer', peerConnection.localDescription, currentRoom);
+        });
+        
         // answer 받기
         socket.on('answer', async (answer) => {
-          await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-          ready = ready + 1;
-          if (ready == 2)
-              {
-                captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-                imageData = captureCanvas.toDataURL('image/png');
-                socket.emit('connect_ai', imageData);
-              }
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
         });
 
         // ICE candidate 받기
         socket.on('ice-candidate', async (candidate) => {
-          await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-          ready = ready + 1;
-          if (ready == 2)
-              {
-                captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-                imageData = captureCanvas.toDataURL('image/png');
-                socket.emit('connect_ai', imageData);
-              }
+          try {
+            await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+          } catch (error) {
+            console.error('오류 발생:', error);
+          }
         });
+
+        
+        // offer 보내기
+        peerConnection.addStream(stream);
+        const offer = await peerConnection.createOffer();
+        peerConnection.setLocalDescription(offer);
+        socket.emit('offer', peerConnection.localDescription, currentRoom);
 
         // ICE candidate 보내기
         peerConnection.onicecandidate = (event) => {
           if (event.candidate) {
-            socket.emit('ice-candidate', event.candidate, currentRoom);
-
+            socket.emit('ICE-candiate',event.candidate,currentRoom);
           }
         };
 
         // 원격 비디오 스트림 받기
-        peerConnection.ontrack = (event) => {
+        peerConnection.ontrack = async (event) => {
           const track = event.track;
-          if (track.kind === 'video') {
-            remoteVideo.srcObject = event.streams[0];
-          }
           remoteVideo.srcObject = event.streams[0];
         };
-
 
         // 연결 상태 이벤트 처리
         peerConnection.oniceconnectionstatechange = () => {
@@ -203,3 +179,4 @@ let ready = 0;
       .catch((error) => {
         console.error('Error accessing webcam:', error);
       });
+      

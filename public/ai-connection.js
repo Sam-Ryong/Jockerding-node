@@ -129,7 +129,7 @@ let ready = 0;
           await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
           captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
           imageData = captureCanvas.toDataURL('image/png');
-          socket.emit('connect_ai', imageData);
+          socket.emit('connect_ai', imageData, currentRoom);
         });
 
         // ICE candidate 보내기

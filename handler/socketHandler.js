@@ -47,7 +47,7 @@ function configureSocket(server) {
 
           }
             catch (error) {
-              console.log("err");
+              console.log(error);
             }
           
         });

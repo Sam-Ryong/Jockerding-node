@@ -42,7 +42,7 @@ function configureSocket(server) {
               base64Data: base64Data,
             });
             socket.emit('graph',response.data.graph);
-            socket.to(room).emit('op_graph', graph);
+            socket.to(room).emit('op_graph', response.data.graph);
             socket.emit('connected_ai');
 
           }

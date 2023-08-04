@@ -178,7 +178,7 @@ let ready = 0;
             console.error('Error uploading image:', error);
           }
   
-          captureAndUpload()
+          await captureAndUpload();
         }
 
       })

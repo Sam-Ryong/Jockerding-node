@@ -268,12 +268,14 @@ td {
   letter-spacing: -6px;
 }
 .anger {
+  margin-left: 3px;
   border-collapse:collapse;
   padding : 0px;
   color : red;
   border : none;
   text-align: left;
   font-weight: normal;
+  display: inline;
 }
 .stick{
   border-collapse:collapse;

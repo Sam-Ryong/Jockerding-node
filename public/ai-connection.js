@@ -104,29 +104,6 @@ let ready = 0;
           captureAndUpload();
         });
 
-        socket.on('op_graph', op_graph => {
-          document.getElementById("op_key3Value").innerText = "■".repeat(parseInt(op_graph["Anger"])/2);
-          document.getElementById("op_key3").innerText = `Anger(${parseInt(op_graph["Anger"])}%)`;
-        sad_ratio = sad_ratio - parseInt(op_graph["Sad"]);
-        rage_ratio = rage_ratio - parseInt(op_graph["Anger"]);
-        if (sad_ratio > 0)
-        {
-          document.getElementById("sad_ratio").innerText = `당신이 상대방보다 ${sad_ratio} 만큼 더 슬픔을 느낍니다.`; 
-        }
-        else 
-        {
-          document.getElementById("sad_ratio").innerText = `상대방이 당신보다 ${sad_ratio * (-1)} 만큼 더 슬픔을 느낍니다.`;
-        }
-        if (rage_ratio > 0)
-        {
-          document.getElementById("rage_ratio").innerText = `당신이 상대방보다 ${rage_ratio} 만큼 더 화를 표출했습니다.`; 
-        }
-        else 
-        {
-          document.getElementById("rage_ratio").innerText = `상대방이 당신보다 ${rage_ratio * (-1)} 만큼 더 화를 표출했습니다.`;
-        }
-      })
-
         // ICE candidate 보내기
         peerConnection.onicecandidate = (event) => {
           if (event.candidate) {

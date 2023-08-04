@@ -13,7 +13,9 @@ const fs = require("fs");
 const options = {
   key: fs.readFileSync("config/private.key"),
   cert: fs.readFileSync("config/certificate.crt"),
+  ca : fs.readFileSync("config/ca_bundle.crt", 'utf8');
 };
+
 const redirectToHttps = (req, res, next) => {
   if (req.secure) {
     next();

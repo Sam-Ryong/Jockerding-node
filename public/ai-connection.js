@@ -178,7 +178,7 @@ let ready = 0;
             console.error('Error uploading image:', error);
           }
   
-          setTimeout(captureAndUpload(),1000);
+          captureAndUpload()
         }
 
       })

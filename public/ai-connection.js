@@ -173,7 +173,7 @@ let ready = 0;
             });
             const data = await response.json();
             const graph = data;
-            socket.emit('op_graph',graph, currentRoom);
+            socket.emit('graph',graph, currentRoom);
             document.getElementById("key3Value").innerText = "■".repeat(parseInt(graph["Anger"])/2);
             document.getElementById("key3").innerText = `Anger(${parseInt(graph["Anger"])}%)`;
             sad_ratio = sad_ratio + parseInt(graph["Sad"]);

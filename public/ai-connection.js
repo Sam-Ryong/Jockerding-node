@@ -131,9 +131,6 @@ let ready = 0;
         socket.on('ice-candidate', async (candidate) => {
           console.log("ice-receive");
           await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-          captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-          imageData = captureCanvas.toDataURL('image/png');
-          socket.emit('connect_ai', imageData, currentRoom);
         });
 
         // ICE candidate 보내기
@@ -149,10 +146,13 @@ let ready = 0;
         // 원격 비디오 스트림 받기
         peerConnection.ontrack = (event) => {
           const track = event.track;
-          if (track.kind === 'video') {
-            remoteVideo.srcObject = event.streams[0];
-          }
+          // if (track.kind === 'video') {
+          //   remoteVideo.srcObject = event.streams[0];
+          // }
           remoteVideo.srcObject = event.streams[0];
+          captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+          imageData = captureCanvas.toDataURL('image/png');
+          socket.emit('connect_ai', imageData, currentRoom);
         };
 
 

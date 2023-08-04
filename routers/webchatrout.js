@@ -48,23 +48,23 @@ router.get('/chat',async (req,res) => {
 });
 });
 
-router.post('/upload', async (req, res) => {
-  // 요청 본문에서 이미지 데이터 URL 추출
-  const imageDataUrl = req.body.image;
+// router.post('/upload', async (req, res) => {
+//   // 요청 본문에서 이미지 데이터 URL 추출
+//   const imageDataUrl = req.body.image;
 
-  // Base64 디코딩하여 이미지 데이터 추출
-  const base64Data = imageDataUrl.replace(/^data:image\/png;base64,/, '');
+//   // Base64 디코딩하여 이미지 데이터 추출
+//   const base64Data = imageDataUrl.replace(/^data:image\/png;base64,/, '');
 
-  try {
-    const response = await axios.post('http://localhost:5000/predict', {
-      base64Data: base64Data,
-    });
-    res.send(response.data.graph);
+//   try {
+//     const response = await axios.post('http://localhost:5000/predict', {
+//       base64Data: base64Data,
+//     });
+//     res.send(response.data.graph);
 
-    }
-   catch (error) {
-    res.status(500).send('Error while sending request to Python server');
-  }
-  });
+//     }
+//    catch (error) {
+//     res.status(500).send('Error while sending request to Python server');
+//   }
+//   });
 
 module.exports = router;

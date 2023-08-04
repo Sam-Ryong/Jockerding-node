@@ -1,5 +1,6 @@
 const socketIO = require('socket.io');
 const axios = require('axios');
+const fs = require('fs');
 
 function configureSocket(server) {
 
@@ -8,6 +9,7 @@ function configureSocket(server) {
     io.on('connection', socket => {
         console.log('새로운 사용자가 연결되었습니다.');
       
+
         socket.on('join room', (room) => {
           // 이미 방이 존재하는 경우
           if (rooms[room] && rooms[room].length === 2) {
@@ -31,33 +33,11 @@ function configureSocket(server) {
       
           console.log(socket.id + '님이 방 ' + room + '에 참여했습니다.');
         });
-      
-      
-        // 클라이언트가 offer를 보내면 다른 사용자에게 전달
-        socket.on('connect_ai', async (imageData) => {
-          base64Data = imageData.replace(/^data:image\/png;base64,/, '');
-          
-          try {
-            const response = await axios.post('http://localhost:5000/predict', {
-              base64Data: base64Data,
-            });
-            await socket.emit('msg',response.data.msg_helmet);
-            await socket.emit('graph',response.data.graph);
-            await socket.emit('connected_ai');
-
-          }
-            catch (error) {
-              console.log("err");
-            }
-          
-        });
-      
-        // socket.on('msg', (msg, room) => {
-        //   socket.to(room).emit('op_msg', msg); // 모든 클라이언트에게 메시지 전송
-        // });
         socket.on('graph', (graph, room) => {
           socket.to(room).emit('op_graph', graph); // 모든 클라이언트에게 메시지 전송
         });
+      
+        // 클라이언트가 offer를 보내면 다른 사용자에게 전달
         socket.on('offer', (offer, room) => {
           socket.to(room).emit('offer', offer);
         });

@@ -26,6 +26,7 @@ module.exports = (code) => { return `<!DOCTYPE html>
                 <div class="center-title">Analysis</div>
                 <div class="ratio">
                     <div id="rage_ratio"></div>
+                    <br>
                     <div id="vsa">More Angry</div>
 
                 </div>
@@ -33,10 +34,13 @@ module.exports = (code) => { return `<!DOCTYPE html>
                 <br>
                 <div class="ratio">
                     <div id="sad_ratio"></div>
+                    <br>
                     <div id="vss">More Sad</div>
 
                 </div>
-
+                <br>
+                <br>
+                <button class="btn" id="endFight">싸움 종료</button>
             </div>
 
             <div class="right-pane">
@@ -50,6 +54,19 @@ module.exports = (code) => { return `<!DOCTYPE html>
     <!-- script.js 파일 로드 -->
     <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"></script>
     <script src="ai-connection.js"></script>
+
+    <script>
+    const endFightButton = document.getElementById('endFight');
+
+    endFightButton.addEventListener('click', () => {
+      // 원하는 링크를 여기에 설정합니다
+      const link = 'https://zackinthebox.tech';
+      
+      // 현재 창을 새 링크로 이동합니다
+      window.location.href = link;
+    });
+    </script>
+
 </body>
 
 </html>`}

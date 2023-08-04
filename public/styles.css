@@ -267,7 +267,22 @@ td {
   text-align: left;
   letter-spacing: -6px;
 }
-
+.anger {
+  border-collapse:collapse;
+  padding : 0px;
+  color : red;
+  border : none;
+  text-align: left;
+  font-weight: normal;
+}
+.stick{
+  border-collapse:collapse;
+  padding: 0px;
+  border : none;
+  color : red;
+  text-align: left;
+  letter-spacing: -6px;
+}
 .video-info {
   text-align: center;
   margin-top: 10px;

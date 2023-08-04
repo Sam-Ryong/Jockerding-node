@@ -14,12 +14,8 @@ module.exports = (code) => { return `<!DOCTYPE html>
             <div class="content" hidden></div>
             <div class="left-pane">
                 <div id="table-div">
-                    <table>
-                        <tr>
-                            <th id="key3">Anger</th>
-                            <td id="key3Value"></td>
-                        </tr>
-                    </table>
+                            <div class = "anger" id="key3">Anger</div>
+                            <div class = "stick" id="key3Value"></div>
                 </div>
                 <div id="roomnum" hidden>${code}</div>
                 <video id="webcamStream" autoplay muted></video>
@@ -43,12 +39,8 @@ module.exports = (code) => { return `<!DOCTYPE html>
 
             <div class="right-pane">
                 <div id="table-div">
-                    <table>
-                        <tr>
-                            <th id="op_key3">Anger</th>
-                            <td id="op_key3Value"></td>
-                        </tr>
-                    </table>
+                <div class = "anger" id="op_key3">Anger</div>
+                <div class = "stick" id="op_key3Value"></div>
                 </div>
                 <video id="remoteVideo" autoplay></video>
             </div>

@@ -33,7 +33,9 @@ function configureSocket(server) {
       
           console.log(socket.id + '님이 방 ' + room + '에 참여했습니다.');
         });
-      
+        socket.on('graph', (graph, room) => {
+          socket.to(room).emit('op_graph', graph); // 모든 클라이언트에게 메시지 전송
+        });
       
         // 클라이언트가 offer를 보내면 다른 사용자에게 전달
         socket.on('offer', (offer, room) => {

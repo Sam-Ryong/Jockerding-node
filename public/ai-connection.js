@@ -28,71 +28,7 @@ let ready = 0;
 
         var peerConnection = new RTCPeerConnection(configuration);
 
-        socket.on('connected_ai', () => {
-
-            captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-            imageData = captureCanvas.toDataURL('image/png');
-            setTimeout(() => {
-                socket.emit('connect_ai', imageData);
-              }, 1000); // 1000밀리초 = 1초
-      
-        })
-
-        socket.on('graph', graph => {
-            document.getElementById("key3Value").innerText = "■".repeat(parseInt(graph["Anger"])/2);
-            document.getElementById("key3").innerText = `Anger(${parseInt(graph["Anger"])}%)`;
-          sad_ratio = sad_ratio + parseInt(graph["Sad"]);
-          rage_ratio = rage_ratio + parseInt(graph["Anger"]);
-          
-          if (sad_ratio > 0)
-          {
-            document.getElementById("sad_ratio").innerText = `당신이 상대방보다 ${sad_ratio} 만큼 더 슬픔을 느낍니다.`; 
-          }
-          else 
-          {
-            document.getElementById("sad_ratio").innerText = `상대방이 당신보다 ${sad_ratio * (-1)} 만큼 더 슬픔을 느낍니다.`;
-          }
-          if (rage_ratio > 0)
-          {
-            document.getElementById("rage_ratio").innerText = `당신이 상대방보다 ${rage_ratio} 만큼 더 화를 표출했습니다.`; 
-          }
-          else 
-          {
-            document.getElementById("rage_ratio").innerText = `상대방이 당신보다 ${rage_ratio * (-1)} 만큼 더 화를 표출했습니다.`;
-          }
-          socket.emit('graph', graph, currentRoom);
-        })
-
-        // socket.on('msg', msg => {
-        //   contentDiv.innerHTML = msg;
-        //   socket.emit('msg',msg, currentRoom);
-        // })
-        // socket.on('op_msg', op_msg => {
-        //   op_contentDiv.innerHTML = op_msg;
-        // })
-
-        socket.on('op_graph', op_graph => {
-            document.getElementById("op_key3Value").innerText = "■".repeat(parseInt(op_graph["Anger"])/2);
-            document.getElementById("op_key3").innerText = `Anger(${parseInt(op_graph["Anger"])}%)`;
-          sad_ratio = sad_ratio - parseInt(op_graph["Sad"]);
-          rage_ratio = rage_ratio - parseInt(op_graph["Anger"]);
-          if (sad_ratio > 0)
-          {
-            document.getElementById("sad_ratio").innerText = `당신이 상대방보다 ${sad_ratio} 만큼 더 슬픔을 느낍니다.`; 
-          }
-          else 
-          {
-            document.getElementById("sad_ratio").innerText = `상대방이 당신보다 ${sad_ratio * (-1)} 만큼 더 슬픔을 느낍니다.`;
-          }
-          if (rage_ratio > 0)
-          {
-            document.getElementById("rage_ratio").innerText = `당신이 상대방보다 ${rage_ratio} 만큼 더 화를 표출했습니다.`; 
-          }
-          else 
-          {
-            document.getElementById("rage_ratio").innerText = `상대방이 당신보다 ${rage_ratio * (-1)} 만큼 더 화를 표출했습니다.`;
-          }
-        })
+        
         socket.on('room joined', (room) => {
           currentRoom = room;
         });
@@ -109,6 +45,9 @@ let ready = 0;
     
         // offer 보내기
         peerConnection.addStream(stream);
+        captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+        imageData = captureCanvas.toDataURL('image/png');
+        socket.emit('stream', imageData);
         peerConnection.createOffer()
           .then(offer => peerConnection.setLocalDescription(offer))
           .then(() => {
@@ -138,9 +77,7 @@ let ready = 0;
         // ICE candidate 받기
         socket.on('ice-candidate', async (candidate) => {
           await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-          captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
-          imageData = captureCanvas.toDataURL('image/png');
-          socket.emit('connect_ai', imageData);
+          captureAndUpload();
         });
 
         // ICE candidate 보내기
@@ -174,7 +111,55 @@ let ready = 0;
             remoteVideo.srcObject = null;
           }
         };
+
+        async function captureAndUpload() {
+          captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
+          const imageData = captureCanvas.toDataURL('image/png');
+  
+          // 서버로 업로드
+          try {
+            const response = await fetch('/upload', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ image: imageData })
+            });
+            const data = await response.json();
+            const graph = data;
+            document.getElementById("key3Value").innerText = "■".repeat(parseInt(graph["Anger"])/2);
+            document.getElementById("key3").innerText = `Anger(${parseInt(graph["Anger"])}%)`;
+            sad_ratio = sad_ratio + parseInt(graph["Sad"]);
+            rage_ratio = rage_ratio + parseInt(graph["Anger"]);
+          
+          if (sad_ratio > 0)
+          {
+            document.getElementById("sad_ratio").innerText = `당신이 상대방보다 ${sad_ratio} 만큼 더 슬픔을 느낍니다.`; 
+          }
+          else 
+          {
+            document.getElementById("sad_ratio").innerText = `상대방이 당신보다 ${sad_ratio * (-1)} 만큼 더 슬픔을 느낍니다.`;
+          }
+          if (rage_ratio > 0)
+          {
+            document.getElementById("rage_ratio").innerText = `당신이 상대방보다 ${rage_ratio} 만큼 더 화를 표출했습니다.`; 
+          }
+          else 
+          {
+            document.getElementById("rage_ratio").innerText = `상대방이 당신보다 ${rage_ratio * (-1)} 만큼 더 화를 표출했습니다.`;
+          }
+
+          } catch (error) {
+            console.error('Error uploading image:', error);
+          }
+  
+          captureAndUpload();
+        }
+
       })
       .catch((error) => {
         console.error('Error accessing webcam:', error);
       });
+
+
+      

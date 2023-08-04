@@ -11,7 +11,8 @@ const configuration = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun1.l.google.com:19302' },
-    {url: 'turn:numb.viagenie.ca', credential: 'muazkh', username: 'webrtc@live.com'}
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun3.l.google.com:19302' }
   ]
 };
 const socket = io();
@@ -200,9 +201,7 @@ let ready = 0;
             console.error('Error uploading image:', error);
           }
   
-          
-          
-          captureAndUpload();
+          setTimeout(captureAndUpload(),1000);
         }
 
       })

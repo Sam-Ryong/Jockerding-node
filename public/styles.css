@@ -22,7 +22,6 @@
 
 html,
 body {
-  text-align: center;
   background: #f6f5f7;
   display: flex;
   justify-content: center;
@@ -190,8 +189,8 @@ span {
 }
 .ratio {
   border :#333;
-  margin : 30px;
   min-height : 100px;
+  text-align: left;
 }
 .gamepage {
   display: flex;
@@ -224,6 +223,7 @@ span {
 }
 
 .center-title {
+  text-align: center;
   margin : 10px;
   font-size : 20px;
 }
@@ -242,47 +242,18 @@ span {
   box-sizing: border-box;
 } */
 
-#table-div {
-  margin-bottom: 5px;
-}
-
-table {
-  width: 50%;
-  margin-left: 5px;
-}
-
-th {
-  border-collapse:collapse;
-  padding : 0px;
-  color : red;
-  border : none;
-  text-align: left;
-  font-weight: normal;
-}
-td {
-  border-collapse:collapse;
-  padding: 0px;
-  border : none;
-  color : red;
-  text-align: left;
-  letter-spacing: -6px;
-}
 .anger {
   margin-left: 3px;
-  border-collapse:collapse;
-  padding : 0px;
+  padding-left : 3px;
   color : red;
-  border : none;
   text-align: left;
-  font-weight: normal;
+  display: inline;
 }
 .stick{
-  border-collapse:collapse;
   padding: 0px;
-  border : none;
   color : red;
   text-align: left;
-  letter-spacing: -6px;
+  letter-spacing: -12px;
   display: inline;
 }
 .video-info {
@@ -309,11 +280,21 @@ td {
 
 #rage_ratio, #sad_ratio {
   text-align: center;
+  margin: 20px;
   margin-bottom: 20px;
 }
 
+
+#vsa, #vss {
+  padding:3px;
+  text-align: center;
+  font-size : 30px;
+}
+
+
 /* Add more styles here as needed */
 #status {
+  text-align: center;
   font-size : 15px;
   color : white;
 }

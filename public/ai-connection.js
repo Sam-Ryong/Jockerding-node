@@ -19,6 +19,8 @@ let currentRoom = null;
 let rage_ratio = 0;
 let sad_ratio = 0;
 let ready = 0;
+let vsa = "Angry";
+let vss = "Sad";
 
     // 웹캠 스트림 표시를 위한 미디어 장치 요청
     navigator.mediaDevices.getUserMedia({video: true, audio: true})
@@ -41,23 +43,60 @@ let ready = 0;
             document.getElementById("key3").innerText = `Anger(${parseInt(graph["Anger"])}%)`;
           sad_ratio = sad_ratio + parseInt(graph["Sad"]);
           rage_ratio = rage_ratio + parseInt(graph["Anger"]);
+          vsa = "Angry";
+          vss = "Sad";
           
           if (sad_ratio > 0)
           {
             document.getElementById("sad_ratio").innerText = `당신이 상대방보다 ${sad_ratio} 만큼 더 슬픔을 느낍니다.`; 
+            if (sad_ratio > 1000)
+          {
+            vss = vss + ">".repeat(10);
           }
+          else {
+            vss = vss + ">".repeat(Math.floor(sad_ratio/100));
+          }
+          }
+
           else 
           {
             document.getElementById("sad_ratio").innerText = `상대방이 당신보다 ${sad_ratio * (-1)} 만큼 더 슬픔을 느낍니다.`;
+            if (sad_ratio < -1000)
+          {
+            vss = "<".repeat(10) + vss;
           }
+          else {
+            vss = "<".repeat(Math.floor((-1)*sad_ratio/100)) + vss;
+          }
+          }
+
           if (rage_ratio > 0)
           {
             document.getElementById("rage_ratio").innerText = `당신이 상대방보다 ${rage_ratio} 만큼 더 화를 표출했습니다.`; 
+            if (rage_ratio > 1000)
+          {
+            vsa = vsa + ">".repeat(10);
+          }
+          else {
+            vsa = vsa + ">".repeat(Math.floor(rage_ratio/100));
+          }
+            
           }
           else 
           {
             document.getElementById("rage_ratio").innerText = `상대방이 당신보다 ${rage_ratio * (-1)} 만큼 더 화를 표출했습니다.`;
+            if (rage_ratio < -1000)
+          {
+            vsa = "<".repeat(10) + vsa;
           }
+          else {
+            vsa = "<".repeat(Math.floor((-1)*rage_ratio/100)) + vsa;
+          }
+          }
+          
+          document.getElementById("vsa").innerText = vsa; 
+          document.getElementById("vss").innerText = vss;
+            
         })
 
         socket.on('op_graph', op_graph => {
@@ -65,22 +104,59 @@ let ready = 0;
             document.getElementById("op_key3").innerText = `Anger(${parseInt(op_graph["Anger"])}%)`;
           sad_ratio = sad_ratio - parseInt(op_graph["Sad"]);
           rage_ratio = rage_ratio - parseInt(op_graph["Anger"]);
+          vsa = "Angry";
+          vss = "Sad";
+          
           if (sad_ratio > 0)
           {
             document.getElementById("sad_ratio").innerText = `당신이 상대방보다 ${sad_ratio} 만큼 더 슬픔을 느낍니다.`; 
+            if (sad_ratio > 1000)
+          {
+            vss = vss + ">".repeat(10);
           }
+          else {
+            vss = vss + ">".repeat(Math.floor(sad_ratio/100));
+          }
+          }
+
           else 
           {
             document.getElementById("sad_ratio").innerText = `상대방이 당신보다 ${sad_ratio * (-1)} 만큼 더 슬픔을 느낍니다.`;
+            if (sad_ratio < -1000)
+          {
+            vss = "<".repeat(10) + vss;
           }
+          else {
+            vss = "<".repeat(Math.floor((-1)*sad_ratio/100)) + vss;
+          }
+          }
+
           if (rage_ratio > 0)
           {
             document.getElementById("rage_ratio").innerText = `당신이 상대방보다 ${rage_ratio} 만큼 더 화를 표출했습니다.`; 
+            if (rage_ratio > 1000)
+          {
+            vsa = vsa + ">".repeat(10);
+          }
+          else {
+            vsa = vsa + ">".repeat(Math.floor(rage_ratio/100));
+          }
+            
           }
           else 
           {
             document.getElementById("rage_ratio").innerText = `상대방이 당신보다 ${rage_ratio * (-1)} 만큼 더 화를 표출했습니다.`;
+            if (rage_ratio < -1000)
+          {
+            vsa = "<".repeat(10) + vsa;
           }
+          else {
+            vsa = "<".repeat(Math.floor((-1)*rage_ratio/100)) + vsa;
+          }
+          }
+          
+          document.getElementById("vsa").innerText = vsa; 
+          document.getElementById("vss").innerText = vss;
         })
         socket.on('room joined', (room) => {
           currentRoom = room;

@@ -8,16 +8,14 @@ module.exports = (code) => { return `<!DOCTYPE html>
 </head>
 
 <body>
+<div id="roomnum" hidden>${code}</div>
     <div class="gamepage">
         <div class="gamestart">Don't Yell</div>
         <div class="container">
             <div class="content" hidden></div>
             <div class="left-pane">
-                <div id="table-div">
-                            <div class = "anger" id="key3">Anger</div>
-                            <div class = "stick" id="key3Value"></div>
-                </div>
-                <div id="roomnum" hidden>${code}</div>
+                <div class = "anger" id="key3">Anger</div>
+                <div class = "stick" id="key3Value"></div>
                 <video id="webcamStream" autoplay muted></video>
                 <canvas id="captureCanvas" width="644" height="548" style="display: none;"></canvas>
                 <div id="status">준비 중...</div>
@@ -27,21 +25,23 @@ module.exports = (code) => { return `<!DOCTYPE html>
             <div class="center-pane">
                 <div class="center-title">Analysis</div>
                 <div class="ratio">
-                    <h5>화를 내는 정도</h5>
                     <div id="rage_ratio"></div>
+                    <div id="vsa">More Angry</div>
+
                 </div>
+                <br>
+                <br>
                 <div class="ratio">
-                    <h5>슬픔을 느끼는 정도</h5>
                     <div id="sad_ratio"></div>
+                    <div id="vss">More Sad</div>
+
                 </div>
 
             </div>
 
             <div class="right-pane">
-                <div id="table-div">
                 <div class = "anger" id="op_key3">Anger</div>
                 <div class = "stick" id="op_key3Value"></div>
-                </div>
                 <video id="remoteVideo" autoplay></video>
             </div>
 

@@ -102,6 +102,7 @@ let ready = 0;
           .then(offer => peerConnection.setLocalDescription(offer))
           .then(() => {
             setTimeout(() => {
+                console.log('offer-emit');
                 socket.emit('offer', peerConnection.localDescription, currentRoom);
               }, 1000); // 1000밀리초 = 1초
             // socket.emit('offer', peerConnection.localDescription, currentRoom);
@@ -113,6 +114,7 @@ let ready = 0;
             .then(answer => peerConnection.setLocalDescription(answer))
             .then(() => {
                 setTimeout(() => {
+                    console.log('answer-emit');
                     socket.emit('answer', peerConnection.localDescription, currentRoom);
                   }, 1000);
                 // socket.emit('answer', peerConnection.localDescription, currentRoom);
@@ -121,11 +123,13 @@ let ready = 0;
 
         // answer 받기
         socket.on('answer', (answer) => {
+          console.log('answer-receive');
           peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
         });
 
         // ICE candidate 받기
         socket.on('ice-candidate', async (candidate) => {
+          console.log("ice-receive");
           await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
           captureContext.drawImage(webcamStream, 0, 0, captureCanvas.width, captureCanvas.height);
           imageData = captureCanvas.toDataURL('image/png');
@@ -136,6 +140,7 @@ let ready = 0;
         peerConnection.onicecandidate = (event) => {
           if (event.candidate) {
             setTimeout( () => {
+              console.log("ice-emit");
                 socket.emit('ice-candidate', event.candidate, currentRoom);
               }, 1000);
           }

@@ -231,7 +231,7 @@ span {
 .ratio {
   border :#333;
   min-height : 100px;
-  text-align: left;
+  text-align: center;
 }
 .gamepage {
   display: flex;

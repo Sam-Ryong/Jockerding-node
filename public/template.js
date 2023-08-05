@@ -10,8 +10,9 @@ module.exports = (code) => { return `<!DOCTYPE html>
 <body>
 <div id="roomnum" hidden>${code}</div>
     <div class="gamepage">
-        <div class="gamestart">Don't Yell</div>
+        
         <div class="container">
+        <div class="gamestart">대화가 필요해</div>
             <div class="content" hidden></div>
             <div class="left-pane">
                 <div class = "anger" id="key3">Anger</div>

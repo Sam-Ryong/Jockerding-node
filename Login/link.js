@@ -38,6 +38,11 @@ router.get("/", async (req, res) => {
       <title>Login</title>
     </head>
     <body>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
       <div class="container" id="container">
         <div class="form-container sign-in-container">
           <form action="/api/auth/link" method="POST">

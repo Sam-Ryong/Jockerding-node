@@ -63,7 +63,7 @@ let vss = "Sad";
             document.getElementById("sad_ratio").innerText = `상대방이 ${sad_ratio * (-1)} 만큼 더 슬퍼하는 중`;
             if (sad_ratio < -1000)
           {
-            vss = "   ".repeat(10) + vss;
+            vss = "   ".repeat(9) + vss;
           }
           else {
             vss = "   ".repeat(Math.floor((-1)*sad_ratio/100)) + vss;
@@ -87,7 +87,7 @@ let vss = "Sad";
             document.getElementById("rage_ratio").innerText = `상대방이 ${rage_ratio * (-1)} 만큼 더 화내는 중`;
             if (rage_ratio < -1000)
           {
-            vsa = "   ".repeat(10) + vsa;
+            vsa = "   ".repeat(9) + vsa;
           }
           else {
             vsa = "   ".repeat(Math.floor((-1)*rage_ratio/100)) + vsa;
@@ -124,7 +124,7 @@ let vss = "Sad";
             document.getElementById("sad_ratio").innerText = `상대방이 ${sad_ratio * (-1)} 만큼 더 슬퍼하는 중`;
             if (sad_ratio < -1000)
           {
-            vss = "   ".repeat(10) + vss;
+            vss = "   ".repeat(9) + vss;
           }
           else {
             vss = "   ".repeat(Math.floor((-1)*sad_ratio/100)) + vss;
@@ -148,7 +148,7 @@ let vss = "Sad";
             document.getElementById("rage_ratio").innerText = `상대방이 ${rage_ratio * (-1)} 만큼 더 화내는 중`;
             if (rage_ratio < -1000)
           {
-            vsa = "   ".repeat(10) + vsa;
+            vsa = "   ".repeat(9) + vsa;
           }
           else {
             vsa = "   ".repeat(Math.floor((-1)*rage_ratio/100)) + vsa;

@@ -10,10 +10,8 @@ module.exports = (code) => { return `<!DOCTYPE html>
 <body>
 <div id="roomnum" hidden>${code}</div>
     <div class="gamepage">
-        
+        <div class="gamestart">대화가 필요해...</div>
         <div class="container">
-        <div class="gamestart">대화가 필요해</div>
-            <div class="content" hidden></div>
             <div class="left-pane">
                 <div class = "anger" id="key3">Anger</div>
                 <div class = "stick" id="key3Value"></div>
@@ -27,21 +25,17 @@ module.exports = (code) => { return `<!DOCTYPE html>
                 <div class="center-title">Analysis</div>
                 <div class="ratio">
                     <div id="rage_ratio"></div>
-                    <br>
-                    <div id="vsa">More Angry</div>
+                    <pre id="vsa">More Angry</pre>
 
                 </div>
-                <br>
-                <br>
                 <div class="ratio">
                     <div id="sad_ratio"></div>
-                    <br>
-                    <div id="vss">More Sad</div>
+                    <pre id="vss">More Sad</pre>
 
                 </div>
                 <br>
                 <br>
-                <button class="btn" id="endFight">싸움 종료</button>
+                <button class="btn" id="endFight">게임 종료</button>
             </div>
 
             <div class="right-pane">

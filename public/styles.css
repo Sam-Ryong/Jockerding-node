@@ -249,24 +249,29 @@ span {
   font-size: 50px;
   text-align: center;
   margin-top: 0;
-  padding-top: 50px;
+  margin-bottom : 50px;
+  padding-top: 150px;
 }
 
 .container {
   display: flex;
-  flex-direction: row; /* 요소들을 세로 방향으로 배치 */
-  justify-content: center; /* 세로 방향에서 가운데로 정렬 */
+  flex-direction: row;
+  justify-content: center;
   align-items: center;
   position: relative;
-  top: 50;
+  /* top: 50; */
   height: 100%;
+  padding-bottom: 50px;
   transition: all 0.6s ease-in-out;
 }
 
 .center-title {
+  border-radius: 5px;
   text-align: center;
   margin : 10px;
   font-size : 20px;
+  background-color: #000000cf;;
+  color : white;
 }
 
 .sign-in-container {
@@ -323,10 +328,12 @@ span {
   text-align: center;
   margin: 20px;
   margin-bottom: 20px;
+  letter-spacing: -0.5px;
 }
 
 
 #vsa, #vss {
+  font-family: "NeoDunggeunmoPro-Regular";
   padding:3px;
   text-align: center;
   font-size : 30px;

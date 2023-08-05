@@ -192,6 +192,10 @@ app.get("/error", (req, res) => {
   res.sendFile(__dirname + "/error.html");
 });
 
+app.get("/rule", (req, res) => {
+  res.sendFile(__dirname + "/rule.html");
+});
+
 // routes
 require("./app/routes/auth.routes")(app);
 

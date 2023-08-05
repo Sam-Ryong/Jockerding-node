@@ -27,9 +27,10 @@ router.get("/", async (req, res) => {
       <div class="container" id="container">
 
 
-        <div class="form-container sign-in-container">      
+        <div class="form-container sign-in-container">     
+        <div class="name">대화가 필요해...</div> 
         <a href="./link">내 짝꿍 찾으러가기</a>
-        <br> 
+
           <h2>${req.user.username} ♥ ${partner}</h2>
   <br> 
           <div class="fightButton" id="myFightButton">

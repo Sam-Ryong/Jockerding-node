@@ -17,12 +17,11 @@ verifyToken = async (req, res, next) => {
     next();
   } else {
     jwt.verify(token, config.secret, (err, decoded) => {
-      try {
-        req.userId = decoded.id;
-        next();
-      } catch (err) {
+      if (err) {
         next();
       }
+      req.userId = decoded.id;
+      next();
     });
   }
 };
